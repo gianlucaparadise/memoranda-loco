@@ -3,7 +3,9 @@ package com.gianlucaparadise.memorandaloco
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.gianlucaparadise.memorandaloco.ui.main.MainFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
