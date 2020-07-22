@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gianlucaparadise.memorandaloco">
 
+    <!-- Required for 28 and below. -->
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <!-- Required for 29+. -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -17,6 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".activityrecognizer.ActivityTransitionUpdateReceiver">
+            <intent-filter>
+                <action android:name="com.gianlucaparadise.memorandaloco.TRANSITION_RECOGNITION" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
