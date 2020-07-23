@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Memoranda Loco</string>
+    <string name="channel_name">Memoranda Loco Notifications</string>
+    <string name="channel_description">Notifications from Memoranda Loco app</string>
 </resources>
