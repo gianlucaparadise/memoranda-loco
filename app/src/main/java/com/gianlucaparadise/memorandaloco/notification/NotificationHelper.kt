@@ -31,10 +31,14 @@ class NotificationHelper @Inject constructor(@ApplicationContext val context: Co
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(body)
+            )
             .setContentIntent(pendingIntent) // intent that will fire when the user taps the notification
             .setAutoCancel(true) // automatically removes the notification when the user taps it
 
