@@ -29,11 +29,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".activityrecognizer.ActivityTransitionUpdateReceiver">
-            <intent-filter>
-                <action android:name="com.gianlucaparadise.memorandaloco.TRANSITION_RECOGNITION" />
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".geofencing.GeofencingUpdateReceiver" android:enabled="true" />
     </application>
 
 </manifest>
