@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gianlucaparadise.memorandaloco.activityrecognizer.ActivityRecognizer
 import com.gianlucaparadise.memorandaloco.geofencing.GeofencingHelper
 import com.gianlucaparadise.memorandaloco.permission.PermissionsHelper
 import kotlinx.coroutines.launch
@@ -15,10 +14,6 @@ class MainViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     private val tag = "MainViewModel"
-
-    fun startActivityRecognizer() {
-        // activityRecognizer.start()
-    }
 
     fun addGeofence() {
         viewModelScope.launch {
