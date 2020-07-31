@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.core.text.HtmlCompat
+import com.gianlucaparadise.memorandaloco.R
 import com.gianlucaparadise.memorandaloco.notification.NotificationHelper
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
@@ -38,12 +40,27 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
         // multiple geofences.
         val triggeringGeofences = geofencingEvent.triggeringGeofences
 
-        val geofencesString = triggeringGeofences.joinToString(",") { it.requestId }
-        val resultString = "TransitionType:$geofenceTransition geofences[$geofencesString]"
+        if (!triggeringGeofences.any { it.requestId == "HOME" }) return
 
-        notificationHelper.sendNotification(
-            "Geofencing Update received",
-            resultString
-        )
+        val title: String
+        val description: String
+
+        when (geofenceTransition) {
+            Geofence.GEOFENCE_TRANSITION_DWELL -> {
+                title = context.getString(R.string.notification_title_at_home)
+                description = context.getString(R.string.notification_body_at_home)
+            }
+            Geofence.GEOFENCE_TRANSITION_EXIT -> {
+                title = context.getString(R.string.notification_title_outside_home)
+                description = context.getString(R.string.notification_body_outside_home)
+            }
+            else -> {
+                // unprocessed geofence transition type
+                return
+            }
+        }
+
+        val descriptionHtml = HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        notificationHelper.sendNotification(title, descriptionHtml)
     }
 }
