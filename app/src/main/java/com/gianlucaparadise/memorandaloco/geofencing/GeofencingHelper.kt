@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.gianlucaparadise.memorandaloco.exception.PermissionsNotGrantedException
 import com.gianlucaparadise.memorandaloco.permission.PermissionsHelper
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.*
@@ -11,6 +12,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 @Singleton
 class GeofencingHelper @Inject constructor(@ApplicationContext val context: Context) {
@@ -45,27 +49,34 @@ class GeofencingHelper @Inject constructor(@ApplicationContext val context: Cont
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    fun addGeofence(id: String, latitude: Double, longitude: Double, radius: Float) {
-        if (!PermissionsHelper.hasLocationPermission(context)) return
+    suspend fun addGeofence(id: String, latitude: Double, longitude: Double, radius: Float) {
+        return suspendCoroutine { continuation ->
+            if (!PermissionsHelper.hasLocationPermission(context)) {
+                continuation.resumeWithException(PermissionsNotGrantedException())
+                return@suspendCoroutine
+            }
 
-        try {
-            geofencingClient.addGeofences(buildGeofencingRequest(id, latitude, longitude, radius), buildGeofencingPendingIntent())
-                .addOnSuccessListener {
-                    Log.d(tag, "Geofence added")
-                }
-                .addOnFailureListener {
-                    val ex = it as? ApiException
-                    if (ex?.statusCode == GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE) {
-                        throw Exception("Geofence not available", it)
-                        // To enable geofence:
-                        // - Settings▸Security&Location▸Location▸Mode and choose High accuracy
-                        // - Settings▸Security&Location▸Location▸Google Location Accuracy and choose Improve Location Accuracy
+            try {
+                geofencingClient.addGeofences(
+                    buildGeofencingRequest(
+                        id,
+                        latitude,
+                        longitude,
+                        radius
+                    ), buildGeofencingPendingIntent()
+                )
+                    .addOnSuccessListener {
+                        Log.d(tag, "Geofence added")
+                        continuation.resume(Unit)
                     }
-
-                    Log.e(tag, "Geofence adding failed", it)
-                }
-        } catch (ex: SecurityException) {
-            Log.e(tag, "GeofencingClient failed while adding", ex)
+                    .addOnFailureListener {
+                        Log.e(tag, "Geofence adding failed", it)
+                        continuation.resumeWithException(it)
+                    }
+            } catch (ex: SecurityException) {
+                Log.e(tag, "GeofencingClient failed while adding", ex)
+                continuation.resumeWithException(ex)
+            }
         }
     }
 }
