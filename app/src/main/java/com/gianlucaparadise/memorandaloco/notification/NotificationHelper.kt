@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -23,11 +24,29 @@ class NotificationHelper @Inject constructor(@ApplicationContext val context: Co
         createNotificationChannel()
     }
 
-    fun sendNotification(title: String, body: String) {
+    private fun buildOtherAppIntent(action: NotificationAction) : Intent {
+        val intent = context.packageManager.getLaunchIntentForPackage(action.parameter)
+        if (intent != null) return intent
 
-        val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        // The app is not installed, I open the market to install the app
+        return Intent(Intent.ACTION_VIEW).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            data = Uri.parse("market://details?id=" + action.parameter)
         }
+    }
+
+    fun sendNotification(title: CharSequence, body: CharSequence, action: NotificationAction) {
+
+        val intent: Intent
+        if (action.actionType == NotificationAction.Type.OpenAnotherApp) {
+            intent = buildOtherAppIntent(action)
+        }
+        else {
+            intent = Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        }
+
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
         val builder = NotificationCompat.Builder(context, channelId)
