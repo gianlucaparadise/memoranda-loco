@@ -32,8 +32,9 @@ class MainViewModel @ViewModelInject constructor(
                 Log.d(tag, "askPermissions: PermissionState: $permissionState")
 
                 geofencingHelper.addGeofence("HOME", 0.0, 0.0, 100f)
-            }
-            catch (ex: Exception) {
+
+                _geofenceError.value = ErrorDescriptor(ErrorType.None)
+            } catch (ex: Exception) {
                 val errorDescriptor = when (ex) {
                     is ApiException -> when (ex.statusCode) {
                         GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE -> {
@@ -44,7 +45,11 @@ class MainViewModel @ViewModelInject constructor(
                         }
                         else -> {
                             // generic error
-                            ErrorDescriptor(ErrorType.GenericApiError, code = GeofenceStatusCodes.getStatusCodeString(ex.statusCode), throwable = ex)
+                            ErrorDescriptor(
+                                ErrorType.GenericApiError,
+                                code = GeofenceStatusCodes.getStatusCodeString(ex.statusCode),
+                                throwable = ex
+                            )
                         }
                     }
                     is PermissionsNotGrantedException -> {

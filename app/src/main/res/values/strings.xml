@@ -2,6 +2,7 @@
     <string name="app_name">Memoranda Loco</string>
     <string name="channel_name">Memoranda Loco Notifications</string>
     <string name="channel_description">Notifications from Memoranda Loco app</string>
+    <string name="geofence_ok">Your home has been registered!\nYou will now be notified when you leave or get home\n🤠</string>
     <string name="error_geofence_not_available">
         To enable geofence, depending on Android version, you need to:\n
         - Settings▸Security&amp;Location▸Location▸Mode and choose High accuracy\n

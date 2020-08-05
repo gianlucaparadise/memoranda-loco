@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewmodel"
             type="com.gianlucaparadise.memorandaloco.ui.main.MainViewModel" />
@@ -16,16 +17,17 @@
         tools:context=".ui.main.MainFragment">
 
         <TextView
-            android:id="@+id/txt_error"
+            android:id="@+id/txt_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
+            android:textAlignment="center"
+            app:geofenceError="@{viewmodel.geofenceError}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Error"
-            app:geofenceError="@{viewmodel.geofenceError}"/>
+            tools:text="@string/geofence_ok" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
