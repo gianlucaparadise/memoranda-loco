@@ -31,7 +31,7 @@ class MainViewModel @ViewModelInject constructor(
                 val permissionState = permissionHelper.askLocationPermission(bypassRationale = true)
                 Log.d(tag, "askPermissions: PermissionState: $permissionState")
 
-                geofencingHelper.addGeofence("HOME", 0.0, 0.0, 100f)
+                geofencingHelper.addGeofence("HOME", 45.444055, 9.225502, 100f)
 
                 _geofenceError.value = ErrorDescriptor(ErrorType.None)
             } catch (ex: Exception) {

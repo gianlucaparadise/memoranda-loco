@@ -6,7 +6,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.text.HtmlCompat
 import com.gianlucaparadise.memorandaloco.R
-import com.gianlucaparadise.memorandaloco.notification.NotificationAction
+import com.gianlucaparadise.memorandaloco.vo.NotificationAction
 import com.gianlucaparadise.memorandaloco.notification.NotificationHelper
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
@@ -57,12 +57,19 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
             Geofence.GEOFENCE_TRANSITION_DWELL -> {
                 title = context.getString(R.string.notification_title_at_home)
                 description = context.getString(R.string.notification_body_at_home)
-                action = NotificationAction(NotificationAction.Type.TurnOffBluetooth)
+                action =
+                    NotificationAction(
+                        NotificationAction.Type.TurnOffBluetooth
+                    )
             }
             Geofence.GEOFENCE_TRANSITION_EXIT -> {
                 title = context.getString(R.string.notification_title_outside_home)
                 description = context.getString(R.string.notification_body_outside_home)
-                action = NotificationAction(NotificationAction.Type.OpenAnotherApp, "it.ministerodellasalute.immuni")
+                action =
+                    NotificationAction(
+                        NotificationAction.Type.OpenAnotherApp,
+                        "it.ministerodellasalute.immuni"
+                    )
             }
             else -> {
                 // unprocessed geofence transition type
