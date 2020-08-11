@@ -2,13 +2,11 @@ package com.gianlucaparadise.memorandaloco.permission
 
 import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
-import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.scopes.ActivityScoped
 import java.lang.Exception
@@ -17,47 +15,22 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @ActivityScoped
-class PermissionsHelper @Inject constructor(@ActivityContext private val context: Context) {
+class PermissionsRequestor @Inject constructor(
+    @ActivityContext private val context: Context,
+    private val checker: PermissionsChecker
+) {
 
-    companion object {
-        fun hasLocationPermission(context: Context) =
-            hasPermission(context, backgroundLocationPermission)
-
-        private fun hasPermissions(context: Context, permissions: Array<String>): Boolean {
-            return permissions.all { hasPermission(context, it) }
-        }
-
-        private fun hasPermission(context: Context, permission: String): Boolean {
-            return ContextCompat.checkSelfPermission(
-                context,
-                permission
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-
-        /**
-         * This is used when asking for permission
-         */
-        private val locationPermissions: Array<String>
-            get() {
-                val result = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    result.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                }
-                return result.toTypedArray()
+    /**
+     * This is used when asking for permission
+     */
+    private val locationPermissions: Array<String>
+        get() {
+            val result = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                result.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
             }
-
-        /**
-         * This is used to check that the user has given background location permission
-         */
-        private val backgroundLocationPermission: String
-            get() {
-                return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                } else {
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                }
-            }
-    }
+            return result.toTypedArray()
+        }
 
     private val tag = "PermissionsHelper"
 
@@ -102,7 +75,7 @@ class PermissionsHelper @Inject constructor(@ActivityContext private val context
                 }
 
             when {
-                hasPermissions(context, permissions) -> {
+                checker.hasPermissions(permissions) -> {
                     Log.d(tag, "askPermission - $permissions: already granted")
                     continuation.resume(Result.Granted)
                 }

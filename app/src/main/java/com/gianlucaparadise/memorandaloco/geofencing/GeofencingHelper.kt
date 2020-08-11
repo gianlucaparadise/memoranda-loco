@@ -5,11 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.gianlucaparadise.memorandaloco.exception.PermissionsNotGrantedException
-import com.gianlucaparadise.memorandaloco.permission.PermissionsHelper
-import com.google.android.gms.common.api.ApiException
+import com.gianlucaparadise.memorandaloco.permission.PermissionsChecker
+import com.gianlucaparadise.memorandaloco.permission.PermissionsRequestor
 import com.google.android.gms.location.*
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
@@ -17,13 +16,21 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 @Singleton
-class GeofencingHelper @Inject constructor(@ApplicationContext val context: Context) {
+class GeofencingHelper @Inject constructor(
+    @ApplicationContext val context: Context,
+    private val permissionsChecker: PermissionsChecker
+) {
 
     private val tag = "GeofencingHelper"
 
     private val geofencingClient: GeofencingClient = LocationServices.getGeofencingClient(context)
 
-    private fun buildGeofenceObject(id: String, latitude: Double, longitude: Double, radius: Float): Geofence {
+    private fun buildGeofenceObject(
+        id: String,
+        latitude: Double,
+        longitude: Double,
+        radius: Float
+    ): Geofence {
         return Geofence.Builder()
             .setRequestId(id)
             .setCircularRegion(
@@ -35,7 +42,12 @@ class GeofencingHelper @Inject constructor(@ApplicationContext val context: Cont
             .build()
     }
 
-    private fun buildGeofencingRequest(id: String, latitude: Double, longitude: Double, radius: Float): GeofencingRequest {
+    private fun buildGeofencingRequest(
+        id: String,
+        latitude: Double,
+        longitude: Double,
+        radius: Float
+    ): GeofencingRequest {
         val geofenceList = listOf(buildGeofenceObject(id, latitude, longitude, radius))
         return GeofencingRequest.Builder().apply {
             // Specifying INITIAL_TRIGGER_ENTER tells Location services that GEOFENCE_TRANSITION_ENTER should be triggered if the device is already inside the geofence.
@@ -51,7 +63,7 @@ class GeofencingHelper @Inject constructor(@ApplicationContext val context: Cont
 
     suspend fun addGeofence(id: String, latitude: Double, longitude: Double, radius: Float) {
         return suspendCoroutine { continuation ->
-            if (!PermissionsHelper.hasLocationPermission(context)) {
+            if (!permissionsChecker.hasBackgroundLocationPermission()) {
                 continuation.resumeWithException(PermissionsNotGrantedException())
                 return@suspendCoroutine
             }
