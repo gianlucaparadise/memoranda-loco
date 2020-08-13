@@ -10,14 +10,14 @@ import com.gianlucaparadise.memorandaloco.vo.Reminder
 interface ReminderDao {
 
     @Query("SELECT * FROM Reminder")
-    fun getAll(): List<Reminder>
+    suspend fun getAll(): List<Reminder>
 
     @Query("SELECT * FROM Reminder WHERE uid IN (:ids)")
-    fun loadAllByIds(ids: IntArray): List<Reminder>
+    suspend fun loadAllByIds(ids: IntArray): List<Reminder>
 
     @Insert
-    fun insertAll(vararg reminders: Reminder)
+    suspend fun insertAll(vararg reminders: Reminder)
 
     @Delete
-    fun delete(item: Reminder)
+    suspend fun delete(item: Reminder)
 }
