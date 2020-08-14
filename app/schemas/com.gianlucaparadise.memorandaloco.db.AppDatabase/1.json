@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8fb7a989a60cd79b715fced3a4135e51",
+    "identityHash": "a95acff02a6379fc7e0f7fc22f4fce5b",
     "entities": [
       {
         "tableName": "Reminder",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "Place",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER NOT NULL, `name` TEXT NOT NULL, `type` INTEGER NOT NULL, `location_latitude` REAL NOT NULL, `location_longitude` REAL NOT NULL, PRIMARY KEY(`uid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `type` INTEGER NOT NULL, `location_latitude` REAL NOT NULL, `location_longitude` REAL NOT NULL)",
         "fields": [
           {
             "fieldPath": "uid",
@@ -99,7 +99,7 @@
           "columnNames": [
             "uid"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": []
@@ -108,7 +108,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8fb7a989a60cd79b715fced3a4135e51')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a95acff02a6379fc7e0f7fc22f4fce5b')"
     ]
   }
 }

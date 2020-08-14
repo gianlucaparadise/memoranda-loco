@@ -2,16 +2,19 @@
     <string name="app_name">Memoranda Loco</string>
     <string name="channel_name">Memoranda Loco Notifications</string>
     <string name="channel_description">Notifications from Memoranda Loco app</string>
+
     <string name="geofence_ok">Your home has been registered!\nYou will now be notified when you leave or get home\n🤠</string>
     <string name="error_geofence_not_available">
         To enable geofence, depending on Android version, you need to:\n
         - Settings▸Security&amp;Location▸Location▸Mode and choose High accuracy\n
         - Settings▸Security&amp;Location▸Location▸Google Location Accuracy and choose Improve Location Accuracy
     </string>
-    <string name="error_too_many_geofences">There have been set too many geofences on this phone</string>
-    <string name="error_geofences_generic_with_code">An error occurred while adding geofence: %s</string>
-    <string name="error_permissions_not_granted">You need to give permissions to the app, in order to use it</string>
-    <string name="error_geofences_generic">An error occurred while adding geofence</string>
+    <string name="error_too_many_geofences">⚠️ There have been set too many geofences on this phone ⚠️</string>
+    <string name="error_geofences_generic_with_code">⚠️ An error occurred while adding geofence: %s ⚠️</string>
+    <string name="error_permissions_not_granted">You need to give permissions to the app, in order to use it 🚷</string>
+    <string name="error_geofences_generic">⚠️ An error occurred while adding geofence ⚠️</string>
+    <string name="error_missing_home">You need to save the location of your home 🏠</string>
+
     <string name="notification_title_at_home">Home sweet home! 🏠🛏</string>
     <string name="notification_body_at_home"><strong>Tap me</strong> to turn off the bluetooth to deactivate Immuni</string>
     <string name="notification_title_outside_home">You\'re leaving home, get ready for the adventure! 🗡🛡</string>

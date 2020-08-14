@@ -3,6 +3,7 @@ package com.gianlucaparadise.memorandaloco.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.gianlucaparadise.memorandaloco.vo.LocationDescriptor
 import com.gianlucaparadise.memorandaloco.vo.Place
 import com.gianlucaparadise.memorandaloco.vo.Reminder
 
@@ -14,4 +15,13 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun placeDao(): PlaceDao
 
+    suspend fun getHome(): Place? {
+        val home = placeDao().loadAllByType(Place.Type.Home)
+        return home.firstOrNull()
+    }
+
+    suspend fun saveHome(location: LocationDescriptor) {
+        val homePlace = Place(name = "Home", type = Place.Type.Home, location = location)
+        placeDao().insertAll(homePlace)
+    }
 }

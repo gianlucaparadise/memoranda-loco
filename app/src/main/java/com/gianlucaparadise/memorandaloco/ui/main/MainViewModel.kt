@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gianlucaparadise.memorandaloco.db.AppDatabase
+import com.gianlucaparadise.memorandaloco.exception.MissingHomeException
 import com.gianlucaparadise.memorandaloco.exception.PermissionsNotGrantedException
 import com.gianlucaparadise.memorandaloco.geofencing.GeofencingHelper
 import com.gianlucaparadise.memorandaloco.permission.PermissionsChecker
@@ -17,18 +19,14 @@ import java.lang.Exception
 
 class MainViewModel @ViewModelInject constructor(
     private val geofencingHelper: GeofencingHelper,
-    private val permissionsChecker: PermissionsChecker,
-    private val permissionsRequestor: PermissionsRequestor
+    private val permissionsRequestor: PermissionsRequestor,
+    private val appDatabase: AppDatabase
 ) : ViewModel() {
 
     private val tag = "MainViewModel"
 
     private val _geofenceError = MutableLiveData<ErrorDescriptor<ErrorType>>()
     val geofenceError: LiveData<ErrorDescriptor<ErrorType>> = _geofenceError
-
-    fun checkPermissions() {
-        permissionsChecker.hasBackgroundLocationPermission()
-    }
 
     fun addGeofence() {
         // This is a fire-and-forget style coroutine, therefore I can't raise exception outside here
@@ -38,10 +36,19 @@ class MainViewModel @ViewModelInject constructor(
                     permissionsRequestor.askLocationPermission(bypassRationale = true)
                 Log.d(tag, "askPermissions: PermissionState: $permissionState")
 
-                geofencingHelper.addGeofence("HOME", 45.444055, 9.225502, 100f)
+                val home = appDatabase.getHome() ?: throw MissingHomeException()
+
+                geofencingHelper.addGeofence(
+                    "HOME",
+                    home.location.latitude,
+                    home.location.longitude,
+                    100f
+                )
 
                 _geofenceError.value = ErrorDescriptor(ErrorType.None)
             } catch (ex: Exception) {
+                Log.e(tag, "addGeofence: Error", ex)
+
                 val errorDescriptor = when (ex) {
                     is ApiException -> when (ex.statusCode) {
                         GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE -> {
@@ -61,6 +68,9 @@ class MainViewModel @ViewModelInject constructor(
                     }
                     is PermissionsNotGrantedException -> {
                         ErrorDescriptor(ErrorType.PermissionsNotGranted, throwable = ex)
+                    }
+                    is MissingHomeException -> {
+                        ErrorDescriptor(ErrorType.MissingHome, throwable = ex)
                     }
                     else -> {
                         ErrorDescriptor(ErrorType.GenericError, throwable = ex)
@@ -84,6 +94,7 @@ class MainViewModel @ViewModelInject constructor(
         GeofenceTooManyGeofences,
         GenericApiError,
         PermissionsNotGranted,
+        MissingHome,
         GenericError,
     }
 }

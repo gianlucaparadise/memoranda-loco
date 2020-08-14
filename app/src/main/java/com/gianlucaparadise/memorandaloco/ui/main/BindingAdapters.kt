@@ -20,6 +20,7 @@ fun bindGeofenceErrorDescriptor(
             errorDescriptor.code
         )
         MainViewModel.ErrorType.PermissionsNotGranted -> view.context.getString(R.string.error_permissions_not_granted)
+        MainViewModel.ErrorType.MissingHome -> view.context.getString(R.string.error_missing_home)
         MainViewModel.ErrorType.GenericError -> view.context.getString(R.string.error_geofences_generic)
     }
 
