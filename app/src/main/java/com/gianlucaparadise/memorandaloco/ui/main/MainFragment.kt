@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.navGraphViewModels
 import com.gianlucaparadise.memorandaloco.R
 import com.gianlucaparadise.memorandaloco.databinding.MainFragmentBinding
@@ -22,7 +23,7 @@ class MainFragment : Fragment() {
         defaultViewModelProviderFactory
     }
 
-    private lateinit var binding : MainFragmentBinding
+    private lateinit var binding: MainFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +37,24 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.geofenceError.observe(viewLifecycleOwner, Observer { errorDescriptor ->
+            if (errorDescriptor == null) return@Observer
+
+            txt_message.text = when (errorDescriptor.type) {
+                MainViewModel.ErrorType.None -> view.context.getString(R.string.geofence_ok)
+                MainViewModel.ErrorType.GeofenceNotAvailable -> view.context.getString(R.string.error_geofence_not_available)
+                MainViewModel.ErrorType.GeofenceTooManyGeofences -> view.context.getString(R.string.error_too_many_geofences)
+                MainViewModel.ErrorType.GenericApiError -> view.context.getString(
+                    R.string.error_geofences_generic_with_code,
+                    errorDescriptor.code
+                )
+                MainViewModel.ErrorType.PermissionsNotGranted -> view.context.getString(R.string.error_permissions_not_granted)
+                MainViewModel.ErrorType.MissingHome -> view.context.getString(R.string.error_missing_home)
+                MainViewModel.ErrorType.GenericError -> view.context.getString(R.string.error_geofences_generic)
+            }
+        })
+
         viewModel.addGeofence() // This will also ask for permissions
     }
 }
