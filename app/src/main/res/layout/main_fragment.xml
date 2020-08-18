@@ -28,5 +28,16 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/geofence_ok" />
 
+        <Button
+            android:id="@+id/btn_requestLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/txt_message"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:onClick="@{() -> viewmodel.requestLocation()}"
+            android:text="@string/btn_requestLocation_label"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

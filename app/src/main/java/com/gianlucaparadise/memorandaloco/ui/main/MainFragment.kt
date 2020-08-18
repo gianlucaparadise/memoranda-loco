@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.navGraphViewModels
@@ -53,6 +54,9 @@ class MainFragment : Fragment() {
                 MainViewModel.ErrorType.MissingHome -> view.context.getString(R.string.error_missing_home)
                 MainViewModel.ErrorType.GenericError -> view.context.getString(R.string.error_geofences_generic)
             }
+
+            btn_requestLocation.isVisible =
+                errorDescriptor.type == MainViewModel.ErrorType.MissingHome
         })
 
         viewModel.addGeofence() // This will also ask for permissions

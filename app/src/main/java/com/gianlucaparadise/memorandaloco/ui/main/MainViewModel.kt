@@ -82,6 +82,10 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
+    fun requestLocation() {
+        Log.d(tag, "requestLocation: requesting")
+    }
+
     data class ErrorDescriptor<T : Enum<T>>(
         val type: T,
         val code: String? = null,
