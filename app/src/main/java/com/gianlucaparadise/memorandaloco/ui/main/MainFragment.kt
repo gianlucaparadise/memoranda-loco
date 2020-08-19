@@ -53,6 +53,8 @@ class MainFragment : Fragment() {
                 MainViewModel.ErrorType.PermissionsNotGranted -> view.context.getString(R.string.error_permissions_not_granted)
                 MainViewModel.ErrorType.MissingHome -> view.context.getString(R.string.error_missing_home)
                 MainViewModel.ErrorType.GenericError -> view.context.getString(R.string.error_geofences_generic)
+                MainViewModel.ErrorType.InvalidLocationError -> view.context.getString(R.string.error_location_invalid)
+                MainViewModel.ErrorType.GenericLocationError -> view.context.getString(R.string.error_location_generic)
             }
 
             btn_requestLocation.isVisible =

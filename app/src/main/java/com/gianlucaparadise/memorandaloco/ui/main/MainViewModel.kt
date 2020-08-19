@@ -7,10 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gianlucaparadise.memorandaloco.db.AppDatabase
+import com.gianlucaparadise.memorandaloco.exception.InvalidLocationException
 import com.gianlucaparadise.memorandaloco.exception.MissingHomeException
 import com.gianlucaparadise.memorandaloco.exception.PermissionsNotGrantedException
 import com.gianlucaparadise.memorandaloco.geofencing.GeofencingHelper
-import com.gianlucaparadise.memorandaloco.permission.PermissionsChecker
+import com.gianlucaparadise.memorandaloco.location.LocationHelper
 import com.gianlucaparadise.memorandaloco.permission.PermissionsRequestor
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.GeofenceStatusCodes
@@ -20,7 +21,8 @@ import java.lang.Exception
 class MainViewModel @ViewModelInject constructor(
     private val geofencingHelper: GeofencingHelper,
     private val permissionsRequestor: PermissionsRequestor,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val locationHelper: LocationHelper
 ) : ViewModel() {
 
     private val tag = "MainViewModel"
@@ -82,8 +84,26 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    fun requestLocation() {
-        Log.d(tag, "requestLocation: requesting")
+    fun requestLocationAndAddGeofence() {
+        viewModelScope.launch {
+            try {
+                val currentLocation = locationHelper.getCurrentLocation()
+                Log.d(tag, "requestLocation: $currentLocation")
+
+                appDatabase.saveHome(currentLocation)
+
+                addGeofence()
+
+            } catch (ex: InvalidLocationException) {
+                Log.e(tag, "requestLocation: InvalidLocationException", ex)
+                _geofenceError.value =
+                    ErrorDescriptor(ErrorType.InvalidLocationError, throwable = ex)
+            } catch (ex: Exception) {
+                Log.e(tag, "requestLocation: error", ex)
+                _geofenceError.value =
+                    ErrorDescriptor(ErrorType.GenericLocationError, throwable = ex)
+            }
+        }
     }
 
     data class ErrorDescriptor<T : Enum<T>>(
@@ -100,5 +120,7 @@ class MainViewModel @ViewModelInject constructor(
         PermissionsNotGranted,
         MissingHome,
         GenericError,
+        InvalidLocationError,
+        GenericLocationError
     }
 }

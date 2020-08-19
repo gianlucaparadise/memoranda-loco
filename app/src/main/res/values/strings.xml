@@ -14,6 +14,8 @@
     <string name="error_permissions_not_granted">You need to give permissions to the app, in order to use it 🚷</string>
     <string name="error_geofences_generic">⚠️ An error occurred while adding geofence ⚠️</string>
     <string name="error_missing_home">You need to save the location of your home 🏠</string>
+    <string name="error_location_invalid">⚠️ It seems that your location is not accurate, try later ⚠️</string>
+    <string name="error_location_generic">⚠️ An error occurred while retrieving location ⚠️</string>
 
     <string name="notification_title_at_home">Home sweet home! 🏠🛏</string>
     <string name="notification_body_at_home"><strong>Tap me</strong> to turn off the bluetooth to deactivate Immuni</string>

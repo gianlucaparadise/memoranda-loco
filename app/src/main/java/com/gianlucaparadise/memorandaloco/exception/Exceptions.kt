@@ -9,3 +9,8 @@ class PermissionsNotGrantedException : Exception()
  * This is thrown when the user has not saved the location of his/her home
  */
 class MissingHomeException : Exception()
+
+/**
+ * This is thrown when the location is invalid e needs to be retrieved in another way
+ */
+class InvalidLocationException : Exception()
