@@ -27,8 +27,8 @@ class MainViewModel @ViewModelInject constructor(
 
     private val tag = "MainViewModel"
 
-    private val _geofenceError = MutableLiveData<ErrorDescriptor<ErrorType>>()
-    val geofenceError: LiveData<ErrorDescriptor<ErrorType>> = _geofenceError
+    private val _message = MutableLiveData<MessageDescriptor<MessageType>>()
+    val message: LiveData<MessageDescriptor<MessageType>> = _message
 
     fun addGeofence() {
         // This is a fire-and-forget style coroutine, therefore I can't raise exception outside here
@@ -47,39 +47,40 @@ class MainViewModel @ViewModelInject constructor(
                     100f
                 )
 
-                _geofenceError.value = ErrorDescriptor(ErrorType.None)
-            } catch (ex: Exception) {
-                Log.e(tag, "addGeofence: Error", ex)
+                _message.value = MessageDescriptor(MessageType.Ok)
+            } catch (ex: ApiException) {
+                Log.e(tag, "addGeofence: ApiException", ex)
 
-                val errorDescriptor = when (ex) {
-                    is ApiException -> when (ex.statusCode) {
-                        GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE -> {
-                            ErrorDescriptor(ErrorType.GeofenceNotAvailable, throwable = ex)
-                        }
-                        GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES -> {
-                            ErrorDescriptor(ErrorType.GeofenceTooManyGeofences, throwable = ex)
-                        }
-                        else -> {
-                            // generic error
-                            ErrorDescriptor(
-                                ErrorType.GenericApiError,
-                                code = GeofenceStatusCodes.getStatusCodeString(ex.statusCode),
-                                throwable = ex
-                            )
-                        }
+                val errorDescriptor = when (ex.statusCode) {
+                    GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE -> {
+                        MessageDescriptor(MessageType.GeofenceNotAvailable, throwable = ex)
                     }
-                    is PermissionsNotGrantedException -> {
-                        ErrorDescriptor(ErrorType.PermissionsNotGranted, throwable = ex)
-                    }
-                    is MissingHomeException -> {
-                        ErrorDescriptor(ErrorType.MissingHome, throwable = ex)
+                    GeofenceStatusCodes.GEOFENCE_TOO_MANY_GEOFENCES -> {
+                        MessageDescriptor(MessageType.GeofenceTooManyGeofences, throwable = ex)
                     }
                     else -> {
-                        ErrorDescriptor(ErrorType.GenericError, throwable = ex)
+                        // generic error
+                        MessageDescriptor(
+                            MessageType.GenericApiError,
+                            code = GeofenceStatusCodes.getStatusCodeString(ex.statusCode),
+                            throwable = ex
+                        )
                     }
                 }
 
-                _geofenceError.value = errorDescriptor
+                _message.value = errorDescriptor
+
+            } catch (ex: PermissionsNotGrantedException) {
+                Log.e(tag, "addGeofence: PermissionsNotGrantedException", ex)
+                _message.value =
+                    MessageDescriptor(MessageType.PermissionsNotGranted, throwable = ex)
+            } catch (ex: MissingHomeException) {
+                Log.e(tag, "addGeofence: MissingHomeException", ex)
+                _message.value = MessageDescriptor(MessageType.MissingHome, throwable = ex)
+            } catch (ex: Exception) {
+                Log.e(tag, "addGeofence: Error", ex)
+                _message.value = MessageDescriptor(MessageType.GenericGeofenceError, throwable = ex)
+            }
             }
         }
     }
@@ -96,30 +97,28 @@ class MainViewModel @ViewModelInject constructor(
 
             } catch (ex: InvalidLocationException) {
                 Log.e(tag, "requestLocation: InvalidLocationException", ex)
-                _geofenceError.value =
-                    ErrorDescriptor(ErrorType.InvalidLocationError, throwable = ex)
+                _message.value = MessageDescriptor(MessageType.InvalidLocationError, throwable = ex)
             } catch (ex: Exception) {
                 Log.e(tag, "requestLocation: error", ex)
-                _geofenceError.value =
-                    ErrorDescriptor(ErrorType.GenericLocationError, throwable = ex)
+                _message.value = MessageDescriptor(MessageType.GenericLocationError, throwable = ex)
             }
         }
     }
 
-    data class ErrorDescriptor<T : Enum<T>>(
+    data class MessageDescriptor<T : Enum<T>>(
         val type: T,
         val code: String? = null,
         val throwable: Throwable? = null
     )
 
-    enum class ErrorType {
-        None,
+    enum class MessageType {
+        Ok,
         GeofenceNotAvailable,
         GeofenceTooManyGeofences,
         GenericApiError,
         PermissionsNotGranted,
         MissingHome,
-        GenericError,
+        GenericGeofenceError,
         InvalidLocationError,
         GenericLocationError
     }

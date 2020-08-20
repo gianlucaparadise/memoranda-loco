@@ -10,12 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.navGraphViewModels
 import com.gianlucaparadise.memorandaloco.R
 import com.gianlucaparadise.memorandaloco.databinding.MainFragmentBinding
-import com.gianlucaparadise.memorandaloco.exception.PermissionsNotGrantedException
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.location.GeofenceStatusCodes
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main_fragment.*
-import java.lang.Exception
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
@@ -39,26 +35,26 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.geofenceError.observe(viewLifecycleOwner, Observer { errorDescriptor ->
+        viewModel.message.observe(viewLifecycleOwner, Observer { errorDescriptor ->
             if (errorDescriptor == null) return@Observer
 
             txt_message.text = when (errorDescriptor.type) {
-                MainViewModel.ErrorType.None -> view.context.getString(R.string.geofence_ok)
-                MainViewModel.ErrorType.GeofenceNotAvailable -> view.context.getString(R.string.error_geofence_not_available)
-                MainViewModel.ErrorType.GeofenceTooManyGeofences -> view.context.getString(R.string.error_too_many_geofences)
-                MainViewModel.ErrorType.GenericApiError -> view.context.getString(
+                MainViewModel.MessageType.Ok -> view.context.getString(R.string.geofence_ok)
+                MainViewModel.MessageType.GeofenceNotAvailable -> view.context.getString(R.string.error_geofence_not_available)
+                MainViewModel.MessageType.GeofenceTooManyGeofences -> view.context.getString(R.string.error_too_many_geofences)
+                MainViewModel.MessageType.GenericApiError -> view.context.getString(
                     R.string.error_geofences_generic_with_code,
                     errorDescriptor.code
                 )
-                MainViewModel.ErrorType.PermissionsNotGranted -> view.context.getString(R.string.error_permissions_not_granted)
-                MainViewModel.ErrorType.MissingHome -> view.context.getString(R.string.error_missing_home)
-                MainViewModel.ErrorType.GenericError -> view.context.getString(R.string.error_geofences_generic)
-                MainViewModel.ErrorType.InvalidLocationError -> view.context.getString(R.string.error_location_invalid)
-                MainViewModel.ErrorType.GenericLocationError -> view.context.getString(R.string.error_location_generic)
+                MainViewModel.MessageType.PermissionsNotGranted -> view.context.getString(R.string.error_permissions_not_granted)
+                MainViewModel.MessageType.MissingHome -> view.context.getString(R.string.error_missing_home)
+                MainViewModel.MessageType.GenericGeofenceError -> view.context.getString(R.string.error_geofences_generic)
+                MainViewModel.MessageType.InvalidLocationError -> view.context.getString(R.string.error_location_invalid)
+                MainViewModel.MessageType.GenericLocationError -> view.context.getString(R.string.error_location_generic)
             }
 
             btn_requestLocation.isVisible =
-                errorDescriptor.type == MainViewModel.ErrorType.MissingHome
+                errorDescriptor.type == MainViewModel.MessageType.MissingHome
         })
 
         viewModel.addGeofence() // This will also ask for permissions
