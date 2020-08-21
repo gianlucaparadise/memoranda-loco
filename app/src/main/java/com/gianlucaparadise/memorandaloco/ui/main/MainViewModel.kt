@@ -12,6 +12,7 @@ import com.gianlucaparadise.memorandaloco.exception.MissingHomeException
 import com.gianlucaparadise.memorandaloco.exception.PermissionsNotGrantedException
 import com.gianlucaparadise.memorandaloco.geofencing.GeofencingHelper
 import com.gianlucaparadise.memorandaloco.location.LocationHelper
+import com.gianlucaparadise.memorandaloco.permission.PermissionsChecker
 import com.gianlucaparadise.memorandaloco.permission.PermissionsRequestor
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.GeofenceStatusCodes
@@ -20,6 +21,7 @@ import java.lang.Exception
 
 class MainViewModel @ViewModelInject constructor(
     private val geofencingHelper: GeofencingHelper,
+    private val permissionsChecker: PermissionsChecker,
     private val permissionsRequestor: PermissionsRequestor,
     private val appDatabase: AppDatabase,
     private val locationHelper: LocationHelper
@@ -27,16 +29,14 @@ class MainViewModel @ViewModelInject constructor(
 
     private val tag = "MainViewModel"
 
-    private val _message = MutableLiveData<MessageDescriptor<MessageType>>()
+    private val _message = MutableLiveData(MessageDescriptor(type = MessageType.Idle))
     val message: LiveData<MessageDescriptor<MessageType>> = _message
 
     fun addGeofence() {
         // This is a fire-and-forget style coroutine, therefore I can't raise exception outside here
         viewModelScope.launch {
             try {
-                val permissionState =
-                    permissionsRequestor.askLocationPermission(bypassRationale = true)
-                Log.d(tag, "askPermissions: PermissionState: $permissionState")
+                if (!permissionsChecker.hasBackgroundLocationPermission()) throw PermissionsNotGrantedException()
 
                 val home = appDatabase.getHome() ?: throw MissingHomeException()
 
@@ -81,6 +81,25 @@ class MainViewModel @ViewModelInject constructor(
                 Log.e(tag, "addGeofence: Error", ex)
                 _message.value = MessageDescriptor(MessageType.GenericGeofenceError, throwable = ex)
             }
+        }
+    }
+
+    fun requestPermissionsAndAddGeofence() {
+        viewModelScope.launch {
+            try {
+                val permissionState =
+                    permissionsRequestor.askLocationPermission(bypassRationale = true)
+
+                if (permissionState != PermissionsRequestor.Result.Granted) throw PermissionsNotGrantedException()
+
+                addGeofence()
+
+            } catch (ex: PermissionsNotGrantedException) {
+                Log.e(tag, "requestPermissions: PermissionsNotGrantedException", ex)
+                _message.value =
+                    MessageDescriptor(MessageType.PermissionsNotGranted, throwable = ex)
+            } catch (ex: Exception) {
+                Log.e(tag, "requestPermissions: Error", ex)
             }
         }
     }
@@ -112,6 +131,7 @@ class MainViewModel @ViewModelInject constructor(
     )
 
     enum class MessageType {
+        Idle,
         Ok,
         GeofenceNotAvailable,
         GeofenceTooManyGeofences,

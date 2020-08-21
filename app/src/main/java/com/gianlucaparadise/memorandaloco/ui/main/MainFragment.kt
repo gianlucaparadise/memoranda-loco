@@ -39,6 +39,7 @@ class MainFragment : Fragment() {
             if (errorDescriptor == null) return@Observer
 
             txt_message.text = when (errorDescriptor.type) {
+                MainViewModel.MessageType.Idle -> "Idle"
                 MainViewModel.MessageType.Ok -> view.context.getString(R.string.geofence_ok)
                 MainViewModel.MessageType.GeofenceNotAvailable -> view.context.getString(R.string.error_geofence_not_available)
                 MainViewModel.MessageType.GeofenceTooManyGeofences -> view.context.getString(R.string.error_too_many_geofences)
@@ -52,6 +53,9 @@ class MainFragment : Fragment() {
                 MainViewModel.MessageType.InvalidLocationError -> view.context.getString(R.string.error_location_invalid)
                 MainViewModel.MessageType.GenericLocationError -> view.context.getString(R.string.error_location_generic)
             }
+
+            btn_requestPermissions.isVisible =
+                errorDescriptor.type == MainViewModel.MessageType.PermissionsNotGranted
 
             btn_requestLocation.isVisible =
                 errorDescriptor.type == MainViewModel.MessageType.MissingHome
