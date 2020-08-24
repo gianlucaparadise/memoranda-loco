@@ -59,6 +59,8 @@ class MainFragment : Fragment() {
 
             btn_requestLocation.isVisible =
                 errorDescriptor.type == MainViewModel.MessageType.MissingHome
+
+            btn_checkHome.isVisible = errorDescriptor.type == MainViewModel.MessageType.Ok
         })
 
         viewModel.addGeofence() // This will also ask for permissions

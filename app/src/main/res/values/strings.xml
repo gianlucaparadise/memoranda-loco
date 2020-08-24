@@ -23,4 +23,5 @@
     <string name="notification_body_outside_home"><strong>Tap me</strong> to turn on Immuni</string>
     <string name="btn_requestLocation_label">Use Current Location</string>
     <string name="btn_requestPermissions_label">Give Permissions</string>
+    <string name="btn_checkHome_label">Check your home</string>
 </resources>

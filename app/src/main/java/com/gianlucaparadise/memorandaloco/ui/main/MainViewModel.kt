@@ -10,6 +10,7 @@ import com.gianlucaparadise.memorandaloco.db.AppDatabase
 import com.gianlucaparadise.memorandaloco.exception.InvalidLocationException
 import com.gianlucaparadise.memorandaloco.exception.MissingHomeException
 import com.gianlucaparadise.memorandaloco.exception.PermissionsNotGrantedException
+import com.gianlucaparadise.memorandaloco.externalNavigator.ExternalNavigatorHelper
 import com.gianlucaparadise.memorandaloco.geofencing.GeofencingHelper
 import com.gianlucaparadise.memorandaloco.location.LocationHelper
 import com.gianlucaparadise.memorandaloco.permission.PermissionsChecker
@@ -24,7 +25,8 @@ class MainViewModel @ViewModelInject constructor(
     private val permissionsChecker: PermissionsChecker,
     private val permissionsRequestor: PermissionsRequestor,
     private val appDatabase: AppDatabase,
-    private val locationHelper: LocationHelper
+    private val locationHelper: LocationHelper,
+    private val externalNavigator: ExternalNavigatorHelper
 ) : ViewModel() {
 
     private val tag = "MainViewModel"
@@ -120,6 +122,19 @@ class MainViewModel @ViewModelInject constructor(
             } catch (ex: Exception) {
                 Log.e(tag, "requestLocation: error", ex)
                 _message.value = MessageDescriptor(MessageType.GenericLocationError, throwable = ex)
+            }
+        }
+    }
+
+    fun checkHome() {
+        viewModelScope.launch {
+            try {
+                val home = appDatabase.getHome() ?: throw MissingHomeException()
+                externalNavigator.openMapForLocation(home.location)
+
+            } catch (ex: MissingHomeException) {
+                Log.e(tag, "checkHome: MissingHomeException", ex)
+                _message.value = MessageDescriptor(MessageType.MissingHome, throwable = ex)
             }
         }
     }
