@@ -20,8 +20,8 @@ abstract class AppDatabase : RoomDatabase() {
         return home.firstOrNull()
     }
 
-    suspend fun saveHome(location: LocationDescriptor) {
-        val homePlace = Place(name = "Home", type = Place.Type.Home, location = location)
+    suspend fun saveHome(location: LocationDescriptor, label: String) {
+        val homePlace = Place(name = label, type = Place.Type.Home, location = location)
         placeDao().insertAll(homePlace)
     }
 }

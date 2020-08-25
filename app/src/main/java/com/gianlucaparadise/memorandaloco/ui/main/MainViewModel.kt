@@ -112,7 +112,8 @@ class MainViewModel @ViewModelInject constructor(
                 val currentLocation = locationHelper.getCurrentLocation()
                 Log.d(tag, "requestLocation: $currentLocation")
 
-                appDatabase.saveHome(currentLocation)
+                val label = "Home" // TODO: create a StringProvider to localize this string
+                appDatabase.saveHome(currentLocation, label)
 
                 addGeofence()
 
@@ -130,7 +131,7 @@ class MainViewModel @ViewModelInject constructor(
         viewModelScope.launch {
             try {
                 val home = appDatabase.getHome() ?: throw MissingHomeException()
-                externalNavigator.openMapForLocation(home.location)
+                externalNavigator.openPlaceOnMap(home)
 
             } catch (ex: MissingHomeException) {
                 Log.e(tag, "checkHome: MissingHomeException", ex)
