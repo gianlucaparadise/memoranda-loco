@@ -54,7 +54,7 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
         val action: NotificationAction
 
         when (geofenceTransition) {
-            Geofence.GEOFENCE_TRANSITION_DWELL -> {
+            Geofence.GEOFENCE_TRANSITION_DWELL, Geofence.GEOFENCE_TRANSITION_ENTER -> {
                 title = context.getString(R.string.notification_title_at_home)
                 description = context.getString(R.string.notification_body_at_home)
                 action =

@@ -37,6 +37,7 @@ class GeofencingHelper @Inject constructor(
                 latitude, longitude, radius
             )
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
+            // .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_DWELL or Geofence.GEOFENCE_TRANSITION_EXIT) // This is for testing
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_DWELL or Geofence.GEOFENCE_TRANSITION_EXIT)
             .setLoiteringDelay(300000) // 5 minutes
             .build()

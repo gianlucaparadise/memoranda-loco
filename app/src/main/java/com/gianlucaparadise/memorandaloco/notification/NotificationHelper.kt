@@ -19,13 +19,16 @@ import javax.inject.Singleton
 @Singleton
 class NotificationHelper @Inject constructor(@ApplicationContext val context: Context) {
 
-    private val channelId = "memoranda-loco-notifications"
+    companion object {
+        private const val channelId = "memoranda-loco-notifications"
+        const val NOTIFICATION_ACTION_EXTRA = "notification_action_extra"
+    }
 
     init {
         createNotificationChannel()
     }
 
-    private fun buildOtherAppIntent(action: NotificationAction) : Intent {
+    private fun buildOtherAppIntent(action: NotificationAction): Intent {
         val intent = context.packageManager.getLaunchIntentForPackage(action.parameter)
         if (intent != null) return intent
 
@@ -41,14 +44,15 @@ class NotificationHelper @Inject constructor(@ApplicationContext val context: Co
         val intent: Intent
         if (action.actionType == NotificationAction.Type.OpenAnotherApp) {
             intent = buildOtherAppIntent(action)
-        }
-        else {
+        } else {
             intent = Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
+            intent.putExtra(NOTIFICATION_ACTION_EXTRA, action)
         }
 
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val builder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_notification)
@@ -73,17 +77,17 @@ class NotificationHelper @Inject constructor(@ApplicationContext val context: Co
     private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = context.getString(R.string.channel_name)
-            val descriptionText = context.getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(channelId, name, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+
+        val name = context.getString(R.string.channel_name)
+        val descriptionText = context.getString(R.string.channel_description)
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelId, name, importance).apply {
+            description = descriptionText
         }
+        // Register the channel with the system
+        val notificationManager: NotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 }
