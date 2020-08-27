@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gianlucaparadise.memorandaloco.db.AppDatabase
+import com.gianlucaparadise.memorandaloco.exception.GpsTurnedOffException
 import com.gianlucaparadise.memorandaloco.exception.InvalidLocationException
 import com.gianlucaparadise.memorandaloco.exception.MissingHomeException
 import com.gianlucaparadise.memorandaloco.exception.PermissionsNotGrantedException
@@ -109,6 +110,8 @@ class MainViewModel @ViewModelInject constructor(
     fun requestLocationAndAddGeofence() {
         viewModelScope.launch {
             try {
+                locationHelper.askToTurnOnGpsIfNeeded()
+
                 val currentLocation = locationHelper.getCurrentLocation()
                 Log.d(tag, "requestLocation: $currentLocation")
 
@@ -120,6 +123,9 @@ class MainViewModel @ViewModelInject constructor(
             } catch (ex: InvalidLocationException) {
                 Log.e(tag, "requestLocation: InvalidLocationException", ex)
                 _message.value = MessageDescriptor(MessageType.InvalidLocationError, throwable = ex)
+            } catch (ex: GpsTurnedOffException) {
+                Log.e(tag, "requestLocation: GpsTurnedOffException", ex)
+                _message.value = MessageDescriptor(MessageType.GpsTurnedOffError, throwable = ex)
             } catch (ex: Exception) {
                 Log.e(tag, "requestLocation: error", ex)
                 _message.value = MessageDescriptor(MessageType.GenericLocationError, throwable = ex)
@@ -156,6 +162,7 @@ class MainViewModel @ViewModelInject constructor(
         MissingHome,
         GenericGeofenceError,
         InvalidLocationError,
+        GpsTurnedOffError,
         GenericLocationError
     }
 }

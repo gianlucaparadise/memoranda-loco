@@ -15,6 +15,7 @@
     <string name="error_geofences_generic">⚠️ An error occurred while adding geofence ⚠️</string>
     <string name="error_missing_home">You need to save the location of your home 🏠</string>
     <string name="error_location_invalid">⚠️ It seems that your location is not accurate, try later ⚠️</string>
+    <string name="error_gps_turned_off">⚠️ You need to turn on the GPS in order to save your home location 🛰️️</string>
     <string name="error_location_generic">⚠️ An error occurred while retrieving location ⚠️</string>
 
     <string name="bluetooth_disabled_popup">The Bluetooth is now disabled. Thanks for saving your battery and our world 🌍</string>

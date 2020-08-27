@@ -14,3 +14,8 @@ class MissingHomeException : Exception()
  * This is thrown when the location is invalid e needs to be retrieved in another way
  */
 class InvalidLocationException : Exception()
+
+/**
+ * This is thrown when the GPS is turned off and the user
+ */
+class GpsTurnedOffException : Exception()
