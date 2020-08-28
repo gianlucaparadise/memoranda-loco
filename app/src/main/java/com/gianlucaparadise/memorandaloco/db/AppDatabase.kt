@@ -1,5 +1,6 @@
 package com.gianlucaparadise.memorandaloco.db
 
+import android.util.Log
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -11,6 +12,8 @@ import com.gianlucaparadise.memorandaloco.vo.Reminder
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
+    private val tag = "AppDatabase"
+
     abstract fun reminderDao(): ReminderDao
 
     abstract fun placeDao(): PlaceDao
@@ -21,6 +24,12 @@ abstract class AppDatabase : RoomDatabase() {
     }
 
     suspend fun saveHome(location: LocationDescriptor, label: String) {
+        val lastSavedHome = getHome()
+        if (lastSavedHome != null) {
+            Log.d(tag, "saveHome: Removing old home place")
+            placeDao().delete(lastSavedHome)
+        }
+
         val homePlace = Place(name = label, type = Place.Type.Home, location = location)
         placeDao().insertAll(homePlace)
     }

@@ -109,27 +109,39 @@ class MainViewModel @ViewModelInject constructor(
 
     fun requestLocationAndAddGeofence() {
         viewModelScope.launch {
-            try {
-                locationHelper.askToTurnOnGpsIfNeeded()
+            requestLocationAndAddGeofenceAsync()
+        }
+    }
 
-                val currentLocation = locationHelper.getCurrentLocation()
-                Log.d(tag, "requestLocation: $currentLocation")
+    fun updateHomeAndAddGeofence() {
+        viewModelScope.launch {
+            requestLocationAndAddGeofenceAsync()
 
-                val label = "Home" // TODO: create a StringProvider to localize this string
-                appDatabase.saveHome(currentLocation, label)
+            // TODO: open snackbar to notify that place has been updated
+        }
+    }
 
-                addGeofence()
+    private suspend fun requestLocationAndAddGeofenceAsync() {
+        try {
+            locationHelper.askToTurnOnGpsIfNeeded()
 
-            } catch (ex: InvalidLocationException) {
-                Log.e(tag, "requestLocation: InvalidLocationException", ex)
-                _message.value = MessageDescriptor(MessageType.InvalidLocationError, throwable = ex)
-            } catch (ex: GpsTurnedOffException) {
-                Log.e(tag, "requestLocation: GpsTurnedOffException", ex)
-                _message.value = MessageDescriptor(MessageType.GpsTurnedOffError, throwable = ex)
-            } catch (ex: Exception) {
-                Log.e(tag, "requestLocation: error", ex)
-                _message.value = MessageDescriptor(MessageType.GenericLocationError, throwable = ex)
-            }
+            val currentLocation = locationHelper.getCurrentLocation()
+            Log.d(tag, "requestLocation: $currentLocation")
+
+            val label = "Home" // TODO: create a StringProvider to localize this string
+            appDatabase.saveHome(currentLocation, label)
+
+            addGeofence()
+
+        } catch (ex: InvalidLocationException) {
+            Log.e(tag, "requestLocation: InvalidLocationException", ex)
+            _message.value = MessageDescriptor(MessageType.InvalidLocationError, throwable = ex)
+        } catch (ex: GpsTurnedOffException) {
+            Log.e(tag, "requestLocation: GpsTurnedOffException", ex)
+            _message.value = MessageDescriptor(MessageType.GpsTurnedOffError, throwable = ex)
+        } catch (ex: Exception) {
+            Log.e(tag, "requestLocation: error", ex)
+            _message.value = MessageDescriptor(MessageType.GenericLocationError, throwable = ex)
         }
     }
 

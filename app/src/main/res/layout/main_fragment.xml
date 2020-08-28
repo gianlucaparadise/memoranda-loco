@@ -62,10 +62,23 @@
             android:layout_margin="10dp"
             android:onClick="@{() -> viewmodel.checkHome()}"
             android:text="@string/btn_checkHome_label"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btn_updateWithCurrentLocation"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_requestLocation"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/btn_updateWithCurrentLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:onClick="@{() -> viewmodel.updateHomeAndAddGeofence()}"
+            android:text="@string/btn_updateWithCurrentLocation_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_checkHome"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

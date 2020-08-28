@@ -28,4 +28,5 @@
     <string name="btn_requestLocation_label">Use Current Location</string>
     <string name="btn_requestPermissions_label">Give Permissions</string>
     <string name="btn_checkHome_label">Check your home</string>
+    <string name="btn_updateWithCurrentLocation_label">Update home location</string>
 </resources>
