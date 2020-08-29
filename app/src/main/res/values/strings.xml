@@ -19,6 +19,7 @@
     <string name="error_location_generic">⚠️ An error occurred while retrieving location ⚠️</string>
 
     <string name="bluetooth_disabled_popup">The Bluetooth is now disabled. Thanks for saving your battery and our world 🌍</string>
+    <string name="home_updated_popup">Your home location has been updated using your current location 🏠</string>
     <string name="btn_ok">OK</string>
 
     <string name="notification_title_at_home">Home sweet home! 🏠🛏</string>

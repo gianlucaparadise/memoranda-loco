@@ -3,6 +3,7 @@ package com.gianlucaparadise.memorandaloco
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.gianlucaparadise.memorandaloco.alert.AlertHelper
 import com.gianlucaparadise.memorandaloco.bluetooth.BluetoothHelper
 import com.gianlucaparadise.memorandaloco.notification.NotificationHelper
 import com.gianlucaparadise.memorandaloco.vo.NotificationAction
@@ -17,6 +18,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var bluetoothHelper: BluetoothHelper
+
+    @Inject
+    lateinit var alertHelper: AlertHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,23 +37,11 @@ class MainActivity : AppCompatActivity() {
         when (notificationAction.actionType) {
             NotificationAction.Type.TurnOffBluetooth -> {
                 bluetoothHelper.isBluetoothEnabled = false
-                displayBluetoothDisabledMessage()
+                alertHelper.showSnackbar(AlertHelper.MessageType.BluetoothDisabled)
             }
             else -> {
                 Log.d(tag, "Skipped NotificationAction Type: ${notificationAction.actionType}")
             }
         }
-    }
-
-    private fun displayBluetoothDisabledMessage() {
-        val mySnackbar = Snackbar.make(
-            findViewById(android.R.id.content),
-            R.string.bluetooth_disabled_popup,
-            Snackbar.LENGTH_INDEFINITE
-        )
-
-        mySnackbar.setAction(R.string.btn_ok) { }
-        mySnackbar.setActionTextColor(getColor(R.color.colorPrimary))
-        mySnackbar.show()
     }
 }

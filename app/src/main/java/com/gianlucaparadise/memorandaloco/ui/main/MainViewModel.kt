@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gianlucaparadise.memorandaloco.alert.AlertHelper
 import com.gianlucaparadise.memorandaloco.db.AppDatabase
 import com.gianlucaparadise.memorandaloco.exception.GpsTurnedOffException
 import com.gianlucaparadise.memorandaloco.exception.InvalidLocationException
@@ -27,7 +28,8 @@ class MainViewModel @ViewModelInject constructor(
     private val permissionsRequestor: PermissionsRequestor,
     private val appDatabase: AppDatabase,
     private val locationHelper: LocationHelper,
-    private val externalNavigator: ExternalNavigatorHelper
+    private val externalNavigator: ExternalNavigatorHelper,
+    private val alertHelper: AlertHelper
 ) : ViewModel() {
 
     private val tag = "MainViewModel"
@@ -116,8 +118,7 @@ class MainViewModel @ViewModelInject constructor(
     fun updateHomeAndAddGeofence() {
         viewModelScope.launch {
             requestLocationAndAddGeofenceAsync()
-
-            // TODO: open snackbar to notify that place has been updated
+            alertHelper.showSnackbar(AlertHelper.MessageType.HomeUpdated)
         }
     }
 
