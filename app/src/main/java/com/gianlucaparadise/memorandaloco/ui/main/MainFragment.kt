@@ -51,7 +51,6 @@ class MainFragment : Fragment() {
                 MainViewModel.MessageType.MissingHome -> view.context.getString(R.string.error_missing_home)
                 MainViewModel.MessageType.GenericGeofenceError -> view.context.getString(R.string.error_geofences_generic)
                 MainViewModel.MessageType.InvalidLocationError -> view.context.getString(R.string.error_location_invalid)
-                MainViewModel.MessageType.GpsTurnedOffError -> view.context.getString(R.string.error_gps_turned_off)
                 MainViewModel.MessageType.GenericLocationError -> view.context.getString(R.string.error_location_generic)
             }
 
@@ -59,7 +58,7 @@ class MainFragment : Fragment() {
                 errorDescriptor.type == MainViewModel.MessageType.PermissionsNotGranted
 
             btn_requestLocation.isVisible =
-                errorDescriptor.type == MainViewModel.MessageType.MissingHome || errorDescriptor.type == MainViewModel.MessageType.GpsTurnedOffError
+                errorDescriptor.type == MainViewModel.MessageType.MissingHome
 
             btn_checkHome.isVisible = errorDescriptor.type == MainViewModel.MessageType.Ok
         })

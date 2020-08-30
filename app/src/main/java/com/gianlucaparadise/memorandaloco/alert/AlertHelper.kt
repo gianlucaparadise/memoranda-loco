@@ -20,6 +20,7 @@ class AlertHelper @Inject constructor(@ActivityContext private val context: Cont
             MessageType.Idle -> "Idle"
             MessageType.BluetoothDisabled -> context.getString(R.string.bluetooth_disabled_popup)
             MessageType.HomeUpdated -> context.getString(R.string.home_updated_popup)
+            MessageType.GpsTurnedOffError -> context.getString(R.string.error_gps_turned_off)
         }
 
         val mySnackbar = Snackbar.make(
@@ -37,6 +38,7 @@ class AlertHelper @Inject constructor(@ActivityContext private val context: Cont
         Idle,
         BluetoothDisabled,
         HomeUpdated,
+        GpsTurnedOffError
     }
 
 }

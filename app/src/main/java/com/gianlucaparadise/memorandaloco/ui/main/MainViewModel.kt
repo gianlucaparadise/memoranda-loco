@@ -139,7 +139,7 @@ class MainViewModel @ViewModelInject constructor(
             _message.value = MessageDescriptor(MessageType.InvalidLocationError, throwable = ex)
         } catch (ex: GpsTurnedOffException) {
             Log.e(tag, "requestLocation: GpsTurnedOffException", ex)
-            _message.value = MessageDescriptor(MessageType.GpsTurnedOffError, throwable = ex)
+            alertHelper.showSnackbar(AlertHelper.MessageType.GpsTurnedOffError)
         } catch (ex: Exception) {
             Log.e(tag, "requestLocation: error", ex)
             _message.value = MessageDescriptor(MessageType.GenericLocationError, throwable = ex)
@@ -175,7 +175,6 @@ class MainViewModel @ViewModelInject constructor(
         MissingHome,
         GenericGeofenceError,
         InvalidLocationError,
-        GpsTurnedOffError,
         GenericLocationError
     }
 }
