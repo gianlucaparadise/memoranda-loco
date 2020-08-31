@@ -8,11 +8,15 @@ import androidx.core.text.HtmlCompat
 import com.gianlucaparadise.memorandaloco.R
 import com.gianlucaparadise.memorandaloco.vo.NotificationAction
 import com.gianlucaparadise.memorandaloco.notification.NotificationHelper
+import com.gianlucaparadise.memorandaloco.preference.PreferenceHelper
+import com.gianlucaparadise.memorandaloco.vo.NotificationRecord
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 import javax.inject.Inject
+import kotlin.math.abs
 
 // Since Hilt is in alpha, doesn't support very well BroadcastReceivers
 // This is a workaround taken from: https://github.com/google/dagger/issues/1918#issuecomment-644239233
@@ -23,6 +27,9 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
 
     @Inject
     lateinit var notificationHelper: NotificationHelper
+
+    @Inject
+    lateinit var preferenceHelper: PreferenceHelper
 
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent) // injection happens here
@@ -52,6 +59,7 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
         val title: String
         val description: String
         val action: NotificationAction
+        val recordTriggerType: NotificationRecord.TriggerType
 
         when (geofenceTransition) {
             Geofence.GEOFENCE_TRANSITION_DWELL -> {
@@ -61,6 +69,7 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
                     NotificationAction(
                         NotificationAction.Type.TurnOffBluetooth
                     )
+                recordTriggerType = NotificationRecord.TriggerType.Dwelling
             }
             Geofence.GEOFENCE_TRANSITION_EXIT -> {
                 title = context.getString(R.string.notification_title_outside_home)
@@ -68,8 +77,9 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
                 action =
                     NotificationAction(
                         NotificationAction.Type.OpenAnotherApp,
-                        "it.ministerodellasalute.immuni"
+                        "it.ministerodellasalute.immuni" // TODO make this customizable
                     )
+                recordTriggerType = NotificationRecord.TriggerType.Leaving
             }
             else -> {
                 // unprocessed geofence transition type
@@ -77,7 +87,33 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
             }
         }
 
+        val newRecord = NotificationRecord(
+            recordTriggerType,
+            Calendar.getInstance(TimeZone.getTimeZone("UTC")).timeInMillis
+        )
+
+        val lastRecord = preferenceHelper.lastHomeNotification
+        if (areClose(lastRecord, newRecord)) {
+            Log.d(tag, "onReceive: Notification skipped because is too close")
+            return
+        }
+
         val descriptionHtml = HtmlCompat.fromHtml(description, HtmlCompat.FROM_HTML_MODE_LEGACY)
         notificationHelper.sendNotification(title, descriptionHtml, action)
+
+        preferenceHelper.lastHomeNotification = newRecord
+    }
+
+    /**
+     * This returns true when two notification records have the same type and are close in time
+     */
+    fun areClose(a: NotificationRecord?, b: NotificationRecord?): Boolean {
+        if (a == null || b == null) return false
+        if (a.triggeredOn != b.triggeredOn) return false
+
+        val fifteenMinutesInMs = 15 * 60 * 1000
+        if (abs(a.time - b.time) > fifteenMinutesInMs) return false
+
+        return true
     }
 }
