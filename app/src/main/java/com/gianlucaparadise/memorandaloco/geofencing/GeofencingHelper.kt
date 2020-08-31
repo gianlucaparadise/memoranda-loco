@@ -92,4 +92,23 @@ class GeofencingHelper @Inject constructor(
             }
         }
     }
+
+    suspend fun removeGeofences(vararg id: String) {
+        return suspendCoroutine { continuation ->
+            try {
+                geofencingClient.removeGeofences(id.asList())
+                    .addOnSuccessListener {
+                        Log.d(tag, "Geofences removed")
+                        continuation.resume(Unit)
+                    }
+                    .addOnFailureListener {
+                        Log.e(tag, "Failed to remove geofences", it)
+                        continuation.resumeWithException(it)
+                    }
+            } catch (ex: SecurityException) {
+                Log.e(tag, "GeofencingClient failed while removing", ex)
+                continuation.resumeWithException(ex)
+            }
+        }
+    }
 }

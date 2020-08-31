@@ -37,6 +37,8 @@ class MainViewModel @ViewModelInject constructor(
     private val _message = MutableLiveData(MessageDescriptor(type = MessageType.Idle))
     val message: LiveData<MessageDescriptor<MessageType>> = _message
 
+    private val homeGeofenceId = "HOME"
+
     fun addGeofence() {
         // This is a fire-and-forget style coroutine, therefore I can't raise exception outside here
         viewModelScope.launch {
@@ -46,7 +48,7 @@ class MainViewModel @ViewModelInject constructor(
                 val home = appDatabase.getHome() ?: throw MissingHomeException()
 
                 geofencingHelper.addGeofence(
-                    "HOME",
+                    homeGeofenceId,
                     home.location.latitude,
                     home.location.longitude,
                     100f
@@ -84,7 +86,7 @@ class MainViewModel @ViewModelInject constructor(
                 _message.value = MessageDescriptor(MessageType.MissingHome, throwable = ex)
             } catch (ex: Exception) {
                 Log.e(tag, "addGeofence: Error", ex)
-                _message.value = MessageDescriptor(MessageType.GenericGeofenceError, throwable = ex)
+                _message.value = MessageDescriptor(MessageType.GenericAddGeofenceError, throwable = ex)
             }
         }
     }
@@ -159,6 +161,21 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
+    fun removeGeofence() {
+        viewModelScope.launch {
+            try {
+                geofencingHelper.removeGeofences(homeGeofenceId)
+                appDatabase.deleteHomeIfPresent()
+
+                addGeofence() // this will fail because HomePlace is missing
+            }
+            catch (ex: Exception) {
+                Log.e(tag, "removeGeofence: Error", ex)
+                _message.value = MessageDescriptor(MessageType.GenericRemoveGeofenceError, throwable = ex)
+            }
+        }
+    }
+
     data class MessageDescriptor<T : Enum<T>>(
         val type: T,
         val code: String? = null,
@@ -173,7 +190,8 @@ class MainViewModel @ViewModelInject constructor(
         GenericApiError,
         PermissionsNotGranted,
         MissingHome,
-        GenericGeofenceError,
+        GenericAddGeofenceError,
+        GenericRemoveGeofenceError,
         InvalidLocationError,
         GenericLocationError
     }

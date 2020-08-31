@@ -12,7 +12,8 @@
     <string name="error_too_many_geofences">⚠️ There have been set too many geofences on this phone ⚠️</string>
     <string name="error_geofences_generic_with_code">⚠️ An error occurred while adding geofence: %s ⚠️</string>
     <string name="error_permissions_not_granted">You need to give permissions to the app, in order to use it 🚷</string>
-    <string name="error_geofences_generic">⚠️ An error occurred while adding geofence ⚠️</string>
+    <string name="error_add_geofences_generic">⚠️ An error occurred while adding geofence ⚠️</string>
+    <string name="error_remove_geofences_generic">⚠️ An error occurred while removing geofence ⚠️</string>
     <string name="error_missing_home">You need to save the location of your home 🏠</string>
     <string name="error_location_invalid">⚠️ It seems that your location is not accurate, try later ⚠️</string>
     <string name="error_gps_turned_off">⚠️ You need to turn on the GPS in order to save your home location 🛰️️</string>
@@ -30,4 +31,5 @@
     <string name="btn_requestPermissions_label">Give Permissions</string>
     <string name="btn_checkHome_label">Check your home</string>
     <string name="btn_updateWithCurrentLocation_label">Update home location</string>
+    <string name="btn_removeReminder_label">Remove Reminder</string>
 </resources>

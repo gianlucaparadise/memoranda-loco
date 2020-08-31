@@ -23,12 +23,18 @@ abstract class AppDatabase : RoomDatabase() {
         return home.firstOrNull()
     }
 
+    /**
+     * This will delete the saved home place if there's one
+     */
+    suspend fun deleteHomeIfPresent() {
+        val lastSavedHome = getHome() ?: return
+
+        Log.d(tag, "deleteHome: Removing old home place")
+        placeDao().delete(lastSavedHome)
+    }
+
     suspend fun saveHome(location: LocationDescriptor, label: String) {
-        val lastSavedHome = getHome()
-        if (lastSavedHome != null) {
-            Log.d(tag, "saveHome: Removing old home place")
-            placeDao().delete(lastSavedHome)
-        }
+        deleteHomeIfPresent()
 
         val homePlace = Place(name = label, type = Place.Type.Home, location = location)
         placeDao().insertAll(homePlace)

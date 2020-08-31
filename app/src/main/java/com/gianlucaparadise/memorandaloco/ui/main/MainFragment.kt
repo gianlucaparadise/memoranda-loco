@@ -49,7 +49,8 @@ class MainFragment : Fragment() {
                 )
                 MainViewModel.MessageType.PermissionsNotGranted -> view.context.getString(R.string.error_permissions_not_granted)
                 MainViewModel.MessageType.MissingHome -> view.context.getString(R.string.error_missing_home)
-                MainViewModel.MessageType.GenericGeofenceError -> view.context.getString(R.string.error_geofences_generic)
+                MainViewModel.MessageType.GenericAddGeofenceError -> view.context.getString(R.string.error_add_geofences_generic)
+                MainViewModel.MessageType.GenericRemoveGeofenceError -> view.context.getString(R.string.error_remove_geofences_generic)
                 MainViewModel.MessageType.InvalidLocationError -> view.context.getString(R.string.error_location_invalid)
                 MainViewModel.MessageType.GenericLocationError -> view.context.getString(R.string.error_location_generic)
             }
@@ -60,7 +61,10 @@ class MainFragment : Fragment() {
             btn_requestLocation.isVisible =
                 errorDescriptor.type == MainViewModel.MessageType.MissingHome
 
-            btn_checkHome.isVisible = errorDescriptor.type == MainViewModel.MessageType.Ok
+            val isOk = errorDescriptor.type == MainViewModel.MessageType.Ok
+            btn_checkHome.isVisible = isOk
+            btn_updateWithCurrentLocation.isVisible = isOk
+            btn_removeReminder.isVisible = isOk
         })
 
         viewModel.addGeofence() // This will also ask for permissions
