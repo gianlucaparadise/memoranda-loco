@@ -47,8 +47,12 @@ class LocationHelper @Inject constructor(@ActivityContext val context: Context) 
     suspend fun getCurrentLocation(): LocationDescriptor {
         checkGpsState()
 
-        // TODO: when location is null or old, request location explicitly
-        val location = getLastLocation() ?: throw InvalidLocationException()
+        val location = getLastLocation() ?: throw InvalidLocationException("Location is null")
+
+        if (location.accuracy >= 100) {
+            throw InvalidLocationException("Location accuracy is too low: ${location.accuracy}")
+        }
+
         return LocationDescriptor(location.latitude, location.longitude)
     }
 

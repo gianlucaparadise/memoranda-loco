@@ -18,15 +18,16 @@
 
         <TextView
             android:id="@+id/txt_message"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginVertical="10dp"
             android:textAlignment="center"
             app:layout_constraintBottom_toTopOf="@+id/btn_requestPermissions"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintWidth_percent="0.9"
             tools:text="@string/geofence_ok" />
 
         <Button

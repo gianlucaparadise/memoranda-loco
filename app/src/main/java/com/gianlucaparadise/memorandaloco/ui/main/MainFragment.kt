@@ -55,11 +55,18 @@ class MainFragment : Fragment() {
                 MainViewModel.MessageType.GenericLocationError -> view.context.getString(R.string.error_location_generic)
             }
 
+            txt_message.textAlignment = when (errorDescriptor.type) {
+                MainViewModel.MessageType.GeofenceNotAvailable, MainViewModel.MessageType.InvalidLocationError -> View.TEXT_ALIGNMENT_TEXT_START
+                else -> View.TEXT_ALIGNMENT_CENTER
+            }
+
             btn_requestPermissions.isVisible =
                 errorDescriptor.type == MainViewModel.MessageType.PermissionsNotGranted
 
-            btn_requestLocation.isVisible =
-                errorDescriptor.type == MainViewModel.MessageType.MissingHome
+            btn_requestLocation.isVisible = when (errorDescriptor.type) {
+                MainViewModel.MessageType.MissingHome, MainViewModel.MessageType.InvalidLocationError -> true
+                else -> false
+            }
 
             val isOk = errorDescriptor.type == MainViewModel.MessageType.Ok
             btn_checkHome.isVisible = isOk
