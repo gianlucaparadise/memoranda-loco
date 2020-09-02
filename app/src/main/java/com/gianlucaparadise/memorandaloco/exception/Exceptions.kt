@@ -19,3 +19,8 @@ class InvalidLocationException(message: String? = null) : Exception(message)
  * This is thrown when the GPS is turned off and the user
  */
 class GpsTurnedOffException : Exception()
+
+/**
+ * This is thrown when the user didn't choose the app to open when the notification is tapped
+ */
+class MissingAppToOpenException : Exception()

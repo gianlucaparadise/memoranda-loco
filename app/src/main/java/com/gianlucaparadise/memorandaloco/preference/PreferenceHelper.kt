@@ -48,4 +48,26 @@ class PreferenceHelper @Inject constructor(@ApplicationContext private val conte
             }
             _lastHomeNotification = value
         }
+
+    private var _appToOpen: String? = null
+    var appToOpen: String?
+        get() {
+            if (_appToOpen == null) {
+                _appToOpen = preferences.getString("appToOpen_packageName", null)
+            }
+            return _appToOpen
+        }
+        set(value) {
+            // Apply method is asynchronous, but the backing field prevents race conditions
+            if (value == null) {
+                preferences.edit()
+                    .remove("appToOpen_packageName")
+                    .apply()
+            } else {
+                preferences.edit()
+                    .putString("appToOpen_packageName", value)
+                    .apply()
+            }
+            _appToOpen = value
+        }
 }

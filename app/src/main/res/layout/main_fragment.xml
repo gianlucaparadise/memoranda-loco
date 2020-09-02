@@ -89,11 +89,28 @@
             android:layout_margin="10dp"
             android:onClick="@{() -> viewmodel.removeGeofence()}"
             android:text="@string/btn_removeReminder_label"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/btn_choose_app"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_updateWithCurrentLocation"
             tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_choose_app"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="@+id/btn_choose_app"
+            tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/btn_choose_app"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_choose_app_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_removeReminder" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

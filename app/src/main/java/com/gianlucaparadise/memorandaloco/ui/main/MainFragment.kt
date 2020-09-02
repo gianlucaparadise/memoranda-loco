@@ -53,6 +53,7 @@ class MainFragment : Fragment() {
                 MainViewModel.MessageType.GenericRemoveGeofenceError -> view.context.getString(R.string.error_remove_geofences_generic)
                 MainViewModel.MessageType.InvalidLocationError -> view.context.getString(R.string.error_location_invalid)
                 MainViewModel.MessageType.GenericLocationError -> view.context.getString(R.string.error_location_generic)
+                MainViewModel.MessageType.MissingAppToOpen -> view.context.getString(R.string.error_missing_app_to_open)
             }
 
             txt_message.textAlignment = when (errorDescriptor.type) {
@@ -67,6 +68,9 @@ class MainFragment : Fragment() {
                 MainViewModel.MessageType.MissingHome, MainViewModel.MessageType.InvalidLocationError -> true
                 else -> false
             }
+
+            group_choose_app.isVisible =
+                errorDescriptor.type == MainViewModel.MessageType.MissingAppToOpen
 
             val isOk = errorDescriptor.type == MainViewModel.MessageType.Ok
             btn_checkHome.isVisible = isOk

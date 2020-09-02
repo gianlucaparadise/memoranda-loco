@@ -77,7 +77,7 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
                 action =
                     NotificationAction(
                         NotificationAction.Type.OpenAnotherApp,
-                        "it.ministerodellasalute.immuni" // TODO make this customizable
+                        preferenceHelper.appToOpen ?: "it.ministerodellasalute.immuni" // This is the official italian contact tracing app
                     )
                 recordTriggerType = NotificationRecord.TriggerType.Leaving
             }

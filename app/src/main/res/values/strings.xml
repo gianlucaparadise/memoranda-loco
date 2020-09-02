@@ -21,6 +21,7 @@
         📍 Wait until your position is displayed with a narrow circle\n
         🤞 Come back here and try again
     </string>
+    <string name="error_missing_app_to_open">Choose the app to open when the notification is tapped 📲🔔</string>
     <string name="error_gps_turned_off">⚠️ You need to turn on the GPS in order to save your home location 🛰️️</string>
     <string name="error_location_generic">⚠️ An error occurred while retrieving location ⚠️</string>
 
@@ -37,4 +38,5 @@
     <string name="btn_checkHome_label">Check your home</string>
     <string name="btn_updateWithCurrentLocation_label">Update home location</string>
     <string name="btn_removeReminder_label">Remove Reminder</string>
+    <string name="btn_choose_app_label">Choose app</string>
 </resources>

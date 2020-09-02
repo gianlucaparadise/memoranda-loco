@@ -8,15 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gianlucaparadise.memorandaloco.alert.AlertHelper
 import com.gianlucaparadise.memorandaloco.db.AppDatabase
-import com.gianlucaparadise.memorandaloco.exception.GpsTurnedOffException
-import com.gianlucaparadise.memorandaloco.exception.InvalidLocationException
-import com.gianlucaparadise.memorandaloco.exception.MissingHomeException
-import com.gianlucaparadise.memorandaloco.exception.PermissionsNotGrantedException
+import com.gianlucaparadise.memorandaloco.exception.*
 import com.gianlucaparadise.memorandaloco.externalNavigator.ExternalNavigatorHelper
 import com.gianlucaparadise.memorandaloco.geofencing.GeofencingHelper
 import com.gianlucaparadise.memorandaloco.location.LocationHelper
 import com.gianlucaparadise.memorandaloco.permission.PermissionsChecker
 import com.gianlucaparadise.memorandaloco.permission.PermissionsRequestor
+import com.gianlucaparadise.memorandaloco.preference.PreferenceHelper
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.GeofenceStatusCodes
 import kotlinx.coroutines.launch
@@ -29,7 +27,8 @@ class MainViewModel @ViewModelInject constructor(
     private val appDatabase: AppDatabase,
     private val locationHelper: LocationHelper,
     private val externalNavigator: ExternalNavigatorHelper,
-    private val alertHelper: AlertHelper
+    private val alertHelper: AlertHelper,
+    private val preferenceHelper: PreferenceHelper
 ) : ViewModel() {
 
     private val tag = "MainViewModel"
@@ -46,6 +45,8 @@ class MainViewModel @ViewModelInject constructor(
                 if (!permissionsChecker.hasBackgroundLocationPermission()) throw PermissionsNotGrantedException()
 
                 val home = appDatabase.getHome() ?: throw MissingHomeException()
+
+                val appToOpen = preferenceHelper.appToOpen ?: throw MissingAppToOpenException()
 
                 geofencingHelper.addGeofence(
                     homeGeofenceId,
@@ -84,9 +85,13 @@ class MainViewModel @ViewModelInject constructor(
             } catch (ex: MissingHomeException) {
                 Log.e(tag, "addGeofence: MissingHomeException", ex)
                 _message.value = MessageDescriptor(MessageType.MissingHome, throwable = ex)
+            } catch (ex: MissingAppToOpenException) {
+                Log.e(tag, "addGeofence: MissingAppToOpenException", ex)
+                _message.value = MessageDescriptor(MessageType.MissingAppToOpen, throwable = ex)
             } catch (ex: Exception) {
                 Log.e(tag, "addGeofence: Error", ex)
-                _message.value = MessageDescriptor(MessageType.GenericAddGeofenceError, throwable = ex)
+                _message.value =
+                    MessageDescriptor(MessageType.GenericAddGeofenceError, throwable = ex)
             }
         }
     }
@@ -168,10 +173,10 @@ class MainViewModel @ViewModelInject constructor(
                 appDatabase.deleteHomeIfPresent()
 
                 addGeofence() // this will fail because HomePlace is missing
-            }
-            catch (ex: Exception) {
+            } catch (ex: Exception) {
                 Log.e(tag, "removeGeofence: Error", ex)
-                _message.value = MessageDescriptor(MessageType.GenericRemoveGeofenceError, throwable = ex)
+                _message.value =
+                    MessageDescriptor(MessageType.GenericRemoveGeofenceError, throwable = ex)
             }
         }
     }
@@ -193,6 +198,7 @@ class MainViewModel @ViewModelInject constructor(
         GenericAddGeofenceError,
         GenericRemoveGeofenceError,
         InvalidLocationError,
-        GenericLocationError
+        GenericLocationError,
+        MissingAppToOpen
     }
 }
