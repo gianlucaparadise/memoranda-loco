@@ -28,7 +28,15 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".geofencing.GeofencingUpdateReceiver" android:enabled="true" />
+        <receiver
+            android:name=".geofencing.GeofencingUpdateReceiver"
+            android:enabled="true" />
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+    </queries>
 
 </manifest>

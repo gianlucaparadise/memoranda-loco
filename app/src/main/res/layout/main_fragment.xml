@@ -99,8 +99,17 @@
             android:id="@+id/group_choose_app"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="@+id/btn_choose_app"
+            app:constraint_referenced_ids="btn_choose_app,application_list"
             tools:visibility="visible" />
+
+        <com.gianlucaparadise.memorandaloco.ui.views.applicationpicker.ApplicationPickerView
+            android:id="@+id/application_list"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_choose_app"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_removeReminder" />
 
         <Button
             android:id="@+id/btn_choose_app"
@@ -110,7 +119,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_removeReminder" />
+            app:layout_constraintTop_toBottomOf="@+id/application_list" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
