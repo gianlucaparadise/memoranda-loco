@@ -1,6 +1,7 @@
 package com.gianlucaparadise.memorandaloco.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,6 +78,10 @@ class MainFragment : Fragment() {
             btn_updateWithCurrentLocation.isVisible = isOk
             btn_removeReminder.isVisible = isOk
         })
+
+        application_list.onSelectionChanged.add {
+            Log.d("fragment", "onViewCreated: Selected app: $it")
+        }
 
         viewModel.addGeofence() // This will also ask for permissions
     }
