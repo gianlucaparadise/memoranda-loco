@@ -12,6 +12,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
+import androidx.databinding.InverseBindingListener
 import androidx.recyclerview.selection.*
 import androidx.recyclerview.widget.RecyclerView
 import com.gianlucaparadise.memorandaloco.R
@@ -26,7 +29,37 @@ class ApplicationPickerView @JvmOverloads constructor(
     defStyle: Int = 0
 ) : LinearLayout(context, attrs, defStyle) {
 
-    private val tag = "ApplicationPicker"
+    companion object {
+        private const val tag = "ApplicationPicker"
+
+        @BindingAdapter("selectedApp")
+        @JvmStatic
+        fun setSelectedApp(view: ApplicationPickerView, newValue: String?) {
+            // Important to break potential infinite loops.
+            if (view.selectedAppPackageName == newValue) return
+
+            Log.d("BindingAdapter", "setSelectedApp: setting $newValue")
+            if (newValue.isNullOrBlank()) view.selectionTracker?.clearSelection()
+            else view.selectionTracker?.select(newValue)
+        }
+
+        @InverseBindingAdapter(attribute = "selectedApp")
+        @JvmStatic
+        fun getSelectedApp(view: ApplicationPickerView): String {
+            return view.selectedAppPackageName ?: ""
+        }
+
+        @BindingAdapter("app:selectedAppAttrChanged")
+        @JvmStatic
+        fun setSelectedAppListener(
+            view: ApplicationPickerView,
+            attrChange: InverseBindingListener
+        ) {
+            view.onSelectionChanged.add {
+                attrChange.onChange()
+            }
+        }
+    }
 
     val onSelectionChanged = mutableListOf<ApplicationPickerViewSelectionChange>()
 
@@ -136,7 +169,7 @@ class ApplicationPickerView @JvmOverloads constructor(
         }
     }
 
-    var selectionTracker: SelectionTracker<String>? = null
+    private var selectionTracker: SelectionTracker<String>? = null
 
     class MyItemDetailsLookup(private val recyclerView: RecyclerView) :
         ItemDetailsLookup<String>() {

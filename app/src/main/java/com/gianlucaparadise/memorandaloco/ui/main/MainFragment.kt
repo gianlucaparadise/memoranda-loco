@@ -79,9 +79,9 @@ class MainFragment : Fragment() {
             btn_removeReminder.isVisible = isOk
         })
 
-        application_list.onSelectionChanged.add {
+        viewModel.selectedApp.observe(viewLifecycleOwner, Observer {
             Log.d("fragment", "onViewCreated: Selected app: $it")
-        }
+        })
 
         viewModel.addGeofence() // This will also ask for permissions
     }

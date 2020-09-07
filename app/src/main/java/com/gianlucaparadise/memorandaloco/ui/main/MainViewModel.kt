@@ -36,6 +36,8 @@ class MainViewModel @ViewModelInject constructor(
     private val _message = MutableLiveData(MessageDescriptor(type = MessageType.Idle))
     val message: LiveData<MessageDescriptor<MessageType>> = _message
 
+    val selectedApp: MutableLiveData<String?> = MutableLiveData("it.ministerodellasalute.immuni")
+
     private val homeGeofenceId = "HOME"
 
     fun addGeofence() {
