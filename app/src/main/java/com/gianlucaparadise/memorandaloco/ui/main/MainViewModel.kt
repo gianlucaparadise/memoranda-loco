@@ -2,10 +2,7 @@ package com.gianlucaparadise.memorandaloco.ui.main
 
 import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.gianlucaparadise.memorandaloco.alert.AlertHelper
 import com.gianlucaparadise.memorandaloco.db.AppDatabase
 import com.gianlucaparadise.memorandaloco.exception.*
@@ -36,9 +33,18 @@ class MainViewModel @ViewModelInject constructor(
     private val _message = MutableLiveData(MessageDescriptor(type = MessageType.Idle))
     val message: LiveData<MessageDescriptor<MessageType>> = _message
 
-    val selectedApp: MutableLiveData<String?> = MutableLiveData("it.ministerodellasalute.immuni")
+    val selectedApp = MutableLiveData<String?>()
+
+    private val _canChooseApp = MediatorLiveData<Boolean>()
+    val canChooseApp: LiveData<Boolean> = _canChooseApp
 
     private val homeGeofenceId = "HOME"
+
+    init {
+        _canChooseApp.addSource(selectedApp) {
+            _canChooseApp.value = !it.isNullOrBlank()
+        }
+    }
 
     fun addGeofence() {
         // This is a fire-and-forget style coroutine, therefore I can't raise exception outside here
