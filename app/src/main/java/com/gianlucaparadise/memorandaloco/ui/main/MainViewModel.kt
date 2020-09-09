@@ -54,7 +54,8 @@ class MainViewModel @ViewModelInject constructor(
 
                 val home = appDatabase.getHome() ?: throw MissingHomeException()
 
-                val appToOpen = preferenceHelper.appToOpen ?: throw MissingAppToOpenException()
+                if (preferenceHelper.appToOpen == null) throw MissingAppToOpenException()
+                // `AppToOpen` will be used by GeofencingUpdateReceiver when the notification is created
 
                 geofencingHelper.addGeofence(
                     homeGeofenceId,
@@ -186,6 +187,20 @@ class MainViewModel @ViewModelInject constructor(
                 _message.value =
                     MessageDescriptor(MessageType.GenericRemoveGeofenceError, throwable = ex)
             }
+        }
+    }
+
+    fun chooseAppAndAddGeofence() {
+        try {
+            val appToOpen = selectedApp.value
+            if (appToOpen.isNullOrBlank()) throw MissingAppToOpenException()
+
+            preferenceHelper.appToOpen = appToOpen
+
+            addGeofence()
+        } catch (ex: MissingAppToOpenException) {
+            Log.e(tag, "chooseAppAndAddGeofence: MissingAppToOpenException", ex)
+            _message.value = MessageDescriptor(MessageType.MissingAppToOpen, throwable = ex)
         }
     }
 

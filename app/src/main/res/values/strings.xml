@@ -30,9 +30,9 @@
     <string name="btn_ok">OK</string>
 
     <string name="notification_title_at_home">Home sweet home! 🏠🛏</string>
-    <string name="notification_body_at_home"><strong>Tap me</strong> to turn off the bluetooth to deactivate Immuni</string>
+    <string name="notification_body_at_home"><strong>Tap me</strong> to turn off the bluetooth to deactivate %s</string>
     <string name="notification_title_outside_home">You\'re leaving home, get ready for the adventure! 🗡🛡</string>
-    <string name="notification_body_outside_home"><strong>Tap me</strong> to turn on Immuni</string>
+    <string name="notification_body_outside_home"><strong>Tap me</strong> to open %s</string>
     <string name="btn_requestLocation_label">Use Current Location</string>
     <string name="btn_requestPermissions_label">Give Permissions</string>
     <string name="btn_checkHome_label">Check your home</string>

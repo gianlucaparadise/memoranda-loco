@@ -117,6 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:enabled="@{viewmodel.canChooseApp}"
+            android:onClick="@{() -> viewmodel.chooseAppAndAddGeofence()}"
             android:text="@string/btn_choose_app_label"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -58,7 +58,7 @@ class PreferenceHelper @Inject constructor(@ApplicationContext private val conte
             return _appToOpen
         }
         set(value) {
-            // Apply method is asynchronous, but the backing field prevents race conditions
+            // Apply method is asynchronous, but the backing field prevents some race conditions
             if (value == null) {
                 preferences.edit()
                     .remove("appToOpen_packageName")

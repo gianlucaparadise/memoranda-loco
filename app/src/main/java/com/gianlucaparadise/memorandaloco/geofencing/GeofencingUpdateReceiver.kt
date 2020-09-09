@@ -3,17 +3,20 @@ package com.gianlucaparadise.memorandaloco.geofencing
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.util.Log
+import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import com.gianlucaparadise.memorandaloco.R
-import com.gianlucaparadise.memorandaloco.vo.NotificationAction
 import com.gianlucaparadise.memorandaloco.notification.NotificationHelper
 import com.gianlucaparadise.memorandaloco.preference.PreferenceHelper
+import com.gianlucaparadise.memorandaloco.vo.NotificationAction
 import com.gianlucaparadise.memorandaloco.vo.NotificationRecord
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.Exception
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
@@ -56,6 +59,10 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
         if (!triggeringGeofences.any { it.requestId == "HOME" }) return
         if (context == null) return
 
+        val appToOpenPackageName = preferenceHelper.appToOpen
+            ?: "it.ministerodellasalute.immuni" // This is the official italian contact tracing app
+        val appToOpenName = getAppName(context, appToOpenPackageName) ?: appToOpenPackageName
+
         val title: String
         val description: String
         val action: NotificationAction
@@ -64,7 +71,7 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
         when (geofenceTransition) {
             Geofence.GEOFENCE_TRANSITION_DWELL -> {
                 title = context.getString(R.string.notification_title_at_home)
-                description = context.getString(R.string.notification_body_at_home)
+                description = context.getString(R.string.notification_body_at_home, appToOpenName)
                 action =
                     NotificationAction(
                         NotificationAction.Type.TurnOffBluetooth
@@ -73,11 +80,12 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
             }
             Geofence.GEOFENCE_TRANSITION_EXIT -> {
                 title = context.getString(R.string.notification_title_outside_home)
-                description = context.getString(R.string.notification_body_outside_home)
+                description =
+                    context.getString(R.string.notification_body_outside_home, appToOpenName)
                 action =
                     NotificationAction(
                         NotificationAction.Type.OpenAnotherApp,
-                        preferenceHelper.appToOpen ?: "it.ministerodellasalute.immuni" // This is the official italian contact tracing app
+                        appToOpenPackageName
                     )
                 recordTriggerType = NotificationRecord.TriggerType.Leaving
             }
@@ -107,7 +115,7 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
     /**
      * This returns true when two notification records have the same type and are close in time
      */
-    fun areClose(a: NotificationRecord?, b: NotificationRecord?): Boolean {
+    private fun areClose(a: NotificationRecord?, b: NotificationRecord?): Boolean {
         if (a == null || b == null) return false
         if (a.triggeredOn != b.triggeredOn) return false
 
@@ -115,5 +123,15 @@ class GeofencingUpdateReceiver : Hilt_GeofencingUpdateReceiver() {
         if (abs(a.time - b.time) > fifteenMinutesInMs) return false
 
         return true
+    }
+
+    private fun getAppName(context: Context, packageName: String): String? {
+        return try {
+            val packageManager = context.packageManager
+            val app: ApplicationInfo = packageManager.getApplicationInfo(packageName, 0)
+            packageManager.getApplicationLabel(app).toString()
+        } catch (e: Exception) {
+            null
+        }
     }
 }
