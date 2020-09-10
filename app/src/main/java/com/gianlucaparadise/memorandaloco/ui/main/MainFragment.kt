@@ -72,6 +72,7 @@ class MainFragment : Fragment() {
 
             group_choose_app.isVisible =
                 errorDescriptor.type == MainViewModel.MessageType.MissingAppToOpen
+            viewModel.preselectApp(application_list.installedApps)
 
             val isOk = errorDescriptor.type == MainViewModel.MessageType.Ok
             btn_checkHome.isVisible = isOk

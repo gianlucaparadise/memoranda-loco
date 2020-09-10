@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.gianlucaparadise.memorandaloco.alert.AlertHelper
+import com.gianlucaparadise.memorandaloco.constants.OFFICIAL_CONTACT_TRACING_APPS
 import com.gianlucaparadise.memorandaloco.db.AppDatabase
 import com.gianlucaparadise.memorandaloco.exception.*
 import com.gianlucaparadise.memorandaloco.externalNavigator.ExternalNavigatorHelper
@@ -202,6 +203,21 @@ class MainViewModel @ViewModelInject constructor(
             Log.e(tag, "chooseAppAndAddGeofence: MissingAppToOpenException", ex)
             _message.value = MessageDescriptor(MessageType.MissingAppToOpen, throwable = ex)
         }
+    }
+
+    /**
+     * Preselects the first contact tracing app found
+     * @param installedApps List of the package names of the apps installed on the phone
+     */
+    fun preselectApp(installedApps: List<String>) {
+        val appsToPreselect = OFFICIAL_CONTACT_TRACING_APPS
+        val installedContactTracingApps = appsToPreselect.intersect(installedApps)
+
+        Log.d(tag, "preselectApp: installedContactTracingApps: $installedContactTracingApps")
+        val appToChoose = installedContactTracingApps.firstOrNull()
+        if (appToChoose.isNullOrBlank()) return
+
+        this.selectedApp.value = appToChoose
     }
 
     data class MessageDescriptor<T : Enum<T>>(

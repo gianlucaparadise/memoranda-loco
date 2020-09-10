@@ -30,7 +30,7 @@ class ApplicationPickerView @JvmOverloads constructor(
 ) : LinearLayout(context, attrs, defStyle) {
 
     companion object {
-        private const val tag = "ApplicationPicker"
+        private const val TAG = "ApplicationPicker"
 
         @BindingAdapter("selectedApp")
         @JvmStatic
@@ -38,9 +38,7 @@ class ApplicationPickerView @JvmOverloads constructor(
             // Important to break potential infinite loops.
             if (view.selectedAppPackageName == newValue) return
 
-            Log.d("BindingAdapter", "setSelectedApp: setting $newValue")
-            if (newValue.isNullOrBlank()) view.selectionTracker?.clearSelection()
-            else view.selectionTracker?.select(newValue)
+            view.selectedAppPackageName = newValue
         }
 
         @InverseBindingAdapter(attribute = "selectedApp")
@@ -63,30 +61,52 @@ class ApplicationPickerView @JvmOverloads constructor(
 
     val onSelectionChanged = mutableListOf<ApplicationPickerViewSelectionChange>()
 
-    val selectedAppPackageName: String?
+    var selectedAppPackageName: String?
         get() = _selectedAppPackageName
+        set(value) {
+            if (_selectedAppPackageName == value) return
+
+            if (value.isNullOrBlank()) selectionTracker?.clearSelection()
+            else selectionTracker?.select(value)
+            // The SelectionTrakcer should then set _selectedAppPackageName and trigger onSelectionChanged
+        }
 
     private var _selectedAppPackageName: String? by Delegates.observable<String?>(null) { _, _, newValue ->
         onSelectionChanged.forEach { it(newValue) }
     }
 
+    private val _installedApps = mutableListOf<String>()
+
+    /**
+     * List of installed apps package names
+     */
+    val installedApps: List<String> = _installedApps
+
     init {
         inflate(context, R.layout.view_application_picker, this)
         initList()
+
+        //val attributes = context.obtainStyledAttributes(attrs, R.styleable.ApplicationPickerView)
+        // read attributes here...
+        //attributes.recycle()
     }
 
     private fun initList() {
         val packageManager = context.packageManager
         val packages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
 
-        val apps = packages.map {
+        val installedApps = packages.map {
             AppDescriptor(
                 packageName = it.packageName,
                 appName = packageManager.getApplicationLabel(it).toString()
             )
         }
 
-        val adapter = Adapter(apps)
+        val installedAppsPackageNames = installedApps.map { it.packageName }
+        _installedApps.clear()
+        _installedApps.addAll(installedAppsPackageNames)
+
+        val adapter = Adapter(installedApps)
         apv_application_list.adapter = adapter
 
         selectionTracker = SelectionTracker.Builder(
@@ -103,7 +123,6 @@ class ApplicationPickerView @JvmOverloads constructor(
             object : SelectionTracker.SelectionObserver<String>() {
                 override fun onSelectionChanged() {
                     super.onSelectionChanged()
-
                     _selectedAppPackageName = selectionTracker?.selection?.firstOrNull()
                 }
             })
