@@ -69,6 +69,8 @@ class ApplicationPickerView @JvmOverloads constructor(
             if (value.isNullOrBlank()) selectionTracker?.clearSelection()
             else selectionTracker?.select(value)
             // The SelectionTrakcer should then set _selectedAppPackageName and trigger onSelectionChanged
+
+            scrollToElement(value)
         }
 
     private var _selectedAppPackageName: String? by Delegates.observable<String?>(null) { _, _, newValue ->
@@ -126,6 +128,14 @@ class ApplicationPickerView @JvmOverloads constructor(
                     _selectedAppPackageName = selectionTracker?.selection?.firstOrNull()
                 }
             })
+    }
+
+    private fun scrollToElement(value: String?) {
+        if (value.isNullOrBlank()) return
+
+        val index = installedApps.indexOf(value)
+        if (index < 0) return
+        apv_application_list.smoothScrollToPosition(index)
     }
 
     data class AppDescriptor(
