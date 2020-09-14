@@ -181,6 +181,7 @@ class MainViewModel @ViewModelInject constructor(
             try {
                 geofencingHelper.removeGeofences(homeGeofenceId)
                 appDatabase.deleteHomeIfPresent()
+                preferenceHelper.appToOpen = null
 
                 addGeofence() // this will fail because HomePlace is missing
             } catch (ex: Exception) {

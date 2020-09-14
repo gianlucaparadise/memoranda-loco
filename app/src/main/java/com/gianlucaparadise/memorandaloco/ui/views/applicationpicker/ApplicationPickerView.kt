@@ -1,6 +1,7 @@
 package com.gianlucaparadise.memorandaloco.ui.views.applicationpicker
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -95,7 +96,9 @@ class ApplicationPickerView @JvmOverloads constructor(
 
     private fun initList() {
         val packageManager = context.packageManager
-        val packages = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+        val packages = packageManager
+            .getInstalledApplications(PackageManager.GET_META_DATA)
+            .filter { (it.flags and ApplicationInfo.FLAG_SYSTEM) != 0 } // excluding system apps
 
         val installedApps = packages.map {
             AppDescriptor(

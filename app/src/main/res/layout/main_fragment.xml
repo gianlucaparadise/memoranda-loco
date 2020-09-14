@@ -89,7 +89,7 @@
             android:layout_margin="10dp"
             android:onClick="@{() -> viewmodel.removeGeofence()}"
             android:text="@string/btn_removeReminder_label"
-            app:layout_constraintBottom_toTopOf="@+id/btn_choose_app"
+            app:layout_constraintBottom_toTopOf="@+id/application_list"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_updateWithCurrentLocation"
