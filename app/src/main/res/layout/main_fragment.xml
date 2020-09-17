@@ -105,7 +105,8 @@
         <com.gianlucaparadise.memorandaloco.ui.views.applicationpicker.ApplicationPickerView
             android:id="@+id/application_list"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="0dp"
+            android:layout_marginVertical="10dp"
             app:layout_constraintBottom_toTopOf="@+id/btn_choose_app"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -116,6 +117,7 @@
             android:id="@+id/btn_choose_app"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
             android:enabled="@{viewmodel.canChooseApp}"
             android:onClick="@{() -> viewmodel.chooseAppAndAddGeofence()}"
             android:text="@string/btn_choose_app_label"

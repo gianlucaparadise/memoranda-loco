@@ -98,14 +98,13 @@ class ApplicationPickerView @JvmOverloads constructor(
         val packageManager = context.packageManager
         val packages = packageManager
             .getInstalledApplications(PackageManager.GET_META_DATA)
-            .filter { (it.flags and ApplicationInfo.FLAG_SYSTEM) != 0 } // excluding system apps
 
         val installedApps = packages.map {
             AppDescriptor(
                 packageName = it.packageName,
                 appName = packageManager.getApplicationLabel(it).toString()
             )
-        }
+        }.sortedBy { it.appName }
 
         val installedAppsPackageNames = installedApps.map { it.packageName }
         _installedApps.clear()
