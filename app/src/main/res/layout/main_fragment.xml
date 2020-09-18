@@ -7,7 +7,7 @@
 
         <variable
             name="viewmodel"
-            type="com.gianlucaparadise.memorandaloco.ui.main.MainViewModel" />
+            type="com.gianlucaparadise.memoloco.ui.main.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -102,7 +102,7 @@
             app:constraint_referenced_ids="btn_choose_app,application_list"
             tools:visibility="visible" />
 
-        <com.gianlucaparadise.memorandaloco.ui.views.applicationpicker.ApplicationPickerView
+        <com.gianlucaparadise.memoloco.ui.views.applicationpicker.ApplicationPickerView
             android:id="@+id/application_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
