@@ -12,7 +12,7 @@ Memoranda Loco will remember you to:
 
 ### Android
 
-Memoranda Loco for Android can be installed from the [Play Store](https://play.google.com/store/apps/details?id=com.gianlucaparadise.memorandaloco).
+Memoranda Loco for Android can be installed from the [Play Store](https://play.google.com/store/apps/details?id=com.gianlucaparadise.memoloco).
 
 ## Tech notes
 
