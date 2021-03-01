@@ -39,4 +39,6 @@
     <string name="btn_updateWithCurrentLocation_label">Update home location</string>
     <string name="btn_removeReminder_label">Remove Reminder</string>
     <string name="btn_choose_app_label">Choose app</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_link">https://sites.google.com/view/memoloco/home-page</string>
 </resources>
