@@ -91,7 +91,7 @@ class MainViewModel @ViewModelInject constructor(
             } catch (ex: PermissionsNotGrantedException) {
                 Log.e(tag, "addGeofence: PermissionsNotGrantedException", ex)
                 _message.value =
-                    MessageDescriptor(MessageType.PermissionsNotGranted, throwable = ex)
+                    MessageDescriptor(getMessageTypeDependingOnPermissionState(), throwable = ex)
             } catch (ex: MissingHomeException) {
                 Log.e(tag, "addGeofence: MissingHomeException", ex)
                 _message.value = MessageDescriptor(MessageType.MissingHome, throwable = ex)
@@ -109,19 +109,38 @@ class MainViewModel @ViewModelInject constructor(
     fun requestPermissionsAndAddGeofence() {
         viewModelScope.launch {
             try {
-                val permissionState =
-                    permissionsRequestor.askLocationPermission(bypassRationale = true)
+                val permissionState = permissionsRequestor.run {
+                    if (canRequestBackgroundPermissions) requestBackgroundLocationPermission(bypassRationale = true)
+                    else requestForegroundLocationPermission(bypassRationale = true)
+                }
 
                 if (permissionState != PermissionsRequestor.Result.Granted) throw PermissionsNotGrantedException()
+
+                val needsAlsoBackgroundLocationPermissions = !permissionsChecker.hasBackgroundLocationPermission()
+                if(needsAlsoBackgroundLocationPermissions) {
+                    _message.value = MessageDescriptor(MessageType.BackgroundPermissionsNotGranted)
+                    return@launch
+                }
 
                 addGeofence()
 
             } catch (ex: PermissionsNotGrantedException) {
                 Log.e(tag, "requestPermissions: PermissionsNotGrantedException", ex)
                 _message.value =
-                    MessageDescriptor(MessageType.PermissionsNotGranted, throwable = ex)
+                    MessageDescriptor(getMessageTypeDependingOnPermissionState(), throwable = ex)
             } catch (ex: Exception) {
                 Log.e(tag, "requestPermissions: Error", ex)
+            }
+        }
+    }
+
+    private fun getMessageTypeDependingOnPermissionState() : MessageType {
+        return permissionsChecker.run {
+            when {
+                needsTwoStepsPermissionRequest && !canRequestBackgroundPermissions -> MessageType.TwoStepsPermissionRequestNeeded
+                needsTwoStepsPermissionRequest && canRequestBackgroundPermissions -> MessageType.BackgroundPermissionsNotGranted
+                !needsTwoStepsPermissionRequest -> MessageType.PermissionsNotGranted
+                else -> throw Exception("Invalid operation") // I should never fall here
             }
         }
     }
@@ -234,6 +253,8 @@ class MainViewModel @ViewModelInject constructor(
         GeofenceTooManyGeofences,
         GenericApiError,
         PermissionsNotGranted,
+        BackgroundPermissionsNotGranted,
+        TwoStepsPermissionRequestNeeded,
         MissingHome,
         GenericAddGeofenceError,
         GenericRemoveGeofenceError,

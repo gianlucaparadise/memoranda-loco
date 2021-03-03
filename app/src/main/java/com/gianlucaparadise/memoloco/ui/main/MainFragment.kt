@@ -49,6 +49,8 @@ class MainFragment : Fragment() {
                     errorDescriptor.code
                 )
                 MainViewModel.MessageType.PermissionsNotGranted -> view.context.getString(R.string.error_permissions_not_granted)
+                MainViewModel.MessageType.BackgroundPermissionsNotGranted -> view.context.getString(R.string.error_background_permissions_not_granted)
+                MainViewModel.MessageType.TwoStepsPermissionRequestNeeded -> view.context.getString(R.string.error_two_steps__permission_request_needed)
                 MainViewModel.MessageType.MissingHome -> view.context.getString(R.string.error_missing_home)
                 MainViewModel.MessageType.GenericAddGeofenceError -> view.context.getString(R.string.error_add_geofences_generic)
                 MainViewModel.MessageType.GenericRemoveGeofenceError -> view.context.getString(R.string.error_remove_geofences_generic)
@@ -62,8 +64,10 @@ class MainFragment : Fragment() {
                 else -> View.TEXT_ALIGNMENT_CENTER
             }
 
-            btn_requestPermissions.isVisible =
-                errorDescriptor.type == MainViewModel.MessageType.PermissionsNotGranted
+            btn_requestPermissions.isVisible = when (errorDescriptor.type) {
+                MainViewModel.MessageType.PermissionsNotGranted, MainViewModel.MessageType.BackgroundPermissionsNotGranted, MainViewModel.MessageType.TwoStepsPermissionRequestNeeded -> true
+                else -> false
+            }
 
             btn_requestLocation.isVisible = when (errorDescriptor.type) {
                 MainViewModel.MessageType.MissingHome, MainViewModel.MessageType.InvalidLocationError -> true

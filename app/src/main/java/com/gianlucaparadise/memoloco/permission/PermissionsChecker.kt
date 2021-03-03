@@ -12,9 +12,6 @@ import javax.inject.Singleton
 @Singleton
 class PermissionsChecker @Inject constructor(@ApplicationContext private val context: Context) {
 
-    fun hasBackgroundLocationPermission() =
-        hasPermission(backgroundLocationPermission)
-
     fun hasPermissions(permissions: Array<String>): Boolean {
         return permissions.all { hasPermission(it) }
     }
@@ -25,6 +22,37 @@ class PermissionsChecker @Inject constructor(@ApplicationContext private val con
             permission
         ) == PackageManager.PERMISSION_GRANTED
     }
+
+    /**
+     * Starting from Android 11 (API 30), background location permissions can be requested only after
+     * the foreground location permissions. The request will navigate the user to the App's settings page
+     * where the permissions can be accepted
+     */
+    val canRequestBackgroundPermissions: Boolean
+        get() {
+            return if (needsTwoStepsPermissionRequest)
+                hasForegroundLocationPermission()
+            else
+                true
+        }
+
+    /**
+     * I need a two steps permission request when I'm on API Level 30 and higher:
+     * - First step: request foreground location permissions
+     * - Second step: navigate the user to the App's settings and ask to choose "Allow all the time"
+     */
+    val needsTwoStepsPermissionRequest: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+
+    fun hasBackgroundLocationPermission() =
+        hasPermission(backgroundLocationPermission)
+
+    fun hasForegroundLocationPermission() =
+        hasPermission(foregroundLocationPermission)
+
+    /**
+     * This is used to check that the user has given foreground location permission
+     */
+    private val foregroundLocationPermission: String = Manifest.permission.ACCESS_FINE_LOCATION
 
     /**
      * This is used to check that the user has given background location permission

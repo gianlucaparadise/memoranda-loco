@@ -11,7 +11,21 @@
     </string>
     <string name="error_too_many_geofences">⚠️ There have been set too many geofences on this phone ⚠️</string>
     <string name="error_geofences_generic_with_code">⚠️ An error occurred while adding geofence: %s ⚠️</string>
-    <string name="error_permissions_not_granted">You need to give permissions to the app, in order to use it 🚷</string>
+    <string name="error_permissions_not_granted">You need to give location permissions to the app, in order to use it 🚷</string>
+    <string name="error_background_permissions_not_granted">
+        Background location permissions are needed to let the app know where you are and notify you.
+        In order to allow this app to use location in background, you need to give the following permissions:\n
+        - Foreground Location ✅\n
+        - Background Location ❌\n
+        Tap on the button and choose "Allow all the time" from the list to give background location permissions.
+    </string>
+    <string name="error_two_steps__permission_request_needed">
+        Background location permissions are needed to let the app know where you are and notify you.
+        In order to allow this app to use location in background, you need to give the following permissions:\n
+        - Foreground Location ❌\n
+        - Background Location ❌\n
+        Tap on the button to give foreground location permissions.
+    </string>
     <string name="error_add_geofences_generic">⚠️ An error occurred while adding geofence ⚠️</string>
     <string name="error_remove_geofences_generic">⚠️ An error occurred while removing geofence ⚠️</string>
     <string name="error_missing_home">You need to save the location of your home 🏠</string>

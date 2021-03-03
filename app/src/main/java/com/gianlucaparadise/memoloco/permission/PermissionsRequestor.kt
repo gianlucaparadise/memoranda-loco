@@ -20,10 +20,22 @@ class PermissionsRequestor @Inject constructor(
     private val checker: PermissionsChecker
 ) {
 
+    val canRequestBackgroundPermissions: Boolean
+        get() = checker.canRequestBackgroundPermissions
+
     /**
      * This is used when asking for permission
      */
-    private val locationPermissions: Array<String>
+    private val foregroundLocationPermissions: Array<String>
+        get() {
+            val result = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)
+            return result.toTypedArray()
+        }
+
+    /**
+     * This is used when asking for permission
+     */
+    private val backgroundLocationPermissions: Array<String>
         get() {
             val result = mutableListOf(Manifest.permission.ACCESS_FINE_LOCATION)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -41,17 +53,29 @@ class PermissionsRequestor @Inject constructor(
     }
 
     /**
-     * Ask for Location permission
+     * Request Foreground Location permission ([Manifest.permission.ACCESS_FINE_LOCATION])
      * @param bypassRationale When true, the permissions are asked even if the app should show request permission rationale
      */
-    suspend fun askLocationPermission(bypassRationale: Boolean) =
-        askPermission(locationPermissions, bypassRationale)
+    suspend fun requestForegroundLocationPermission(bypassRationale: Boolean) =
+        requestPermission(foregroundLocationPermissions, bypassRationale)
+
+    /**
+     * Request Background Location permission. Use [PermissionsChecker.canRequestBackgroundPermissions] to check if you call this method
+     * @param bypassRationale When true, the permissions are asked even if the app should show request permission rationale
+     */
+    suspend fun requestBackgroundLocationPermission(bypassRationale: Boolean): Result {
+        if (!checker.canRequestBackgroundPermissions) {
+            throw Exception("You can't request background permissions. Use `canRequestBackgroundPermissions` API to check when you can.")
+        }
+
+        return requestPermission(backgroundLocationPermissions, bypassRationale)
+    }
 
     /**
      * Ask for input permission
      * @param bypassRationale When true, the permissions are asked even if the app should show request permission rationale
      */
-    private suspend fun askPermission(
+    private suspend fun requestPermission(
         permissions: Array<String>,
         bypassRationale: Boolean
     ): Result {
