@@ -39,6 +39,9 @@ class MainViewModel @ViewModelInject constructor(
     private val _canChooseApp = MediatorLiveData<Boolean>()
     val canChooseApp: LiveData<Boolean> = _canChooseApp
 
+    private val _isLocationPermissionsDialogVisible = MutableLiveData<Boolean>(false)
+    val isLocationPermissionsDialogVisible : LiveData<Boolean> = _isLocationPermissionsDialogVisible
+
     private val homeGeofenceId = "HOME"
 
     init {
@@ -106,10 +109,29 @@ class MainViewModel @ViewModelInject constructor(
         }
     }
 
-    fun requestPermissionsAndAddGeofence() {
+    fun startPermissionsRequestAndAddGeofence() {
+        if(permissionsRequestor.canRequestBackgroundPermissions) {
+            // For background permissions, I need to display a dialog
+            _isLocationPermissionsDialogVisible.value = true
+        }
+        else {
+            requestPermissionsAndAddGeofence()
+        }
+    }
+
+    fun onLocationPermissionsDialogCancel() {
+        _isLocationPermissionsDialogVisible.value = false
+    }
+
+    fun onLocationPermissionsDialogConfirm() {
+        _isLocationPermissionsDialogVisible.value = false
+        requestPermissionsAndAddGeofence()
+    }
+
+    private fun requestPermissionsAndAddGeofence() {
         viewModelScope.launch {
             try {
-                val permissionState = permissionsRequestor.run {
+                val permissionState = with(permissionsRequestor) {
                     if (canRequestBackgroundPermissions) requestBackgroundLocationPermission(bypassRationale = true)
                     else requestForegroundLocationPermission(bypassRationale = true)
                 }

@@ -16,20 +16,18 @@
         This app collects location data to enable location-based notifications even when the app is closed or not in use
     </string>
     <string name="error_background_permissions_not_granted">
-        Background location permissions are needed to let the app know where you are and notify you.
-        This app collects location data to enable location-based notifications even when the app is closed or not in use.\n\n
+        Background location permissions are needed to let the app know where you are and notify you.\n\n
         In order to allow this app to use location in background, you need to give the following permissions:\n
         - Foreground Location ✅\n
         - Background Location ❌\n
-        Tap on the button and choose "Allow all the time" from the list to give background location permissions.
+        \nTap on the button and choose \"Allow all the time\" from the list to give background location permissions.
     </string>
     <string name="error_two_steps__permission_request_needed">
-        Background location permissions are needed to let the app know where you are and notify you.
-        This app collects location data to enable location-based notifications even when the app is closed or not in use.\n\n
+        Background location permissions are needed to let the app know where you are and notify you.\n\n
         In order to allow this app to use location in background, you need to give the following permissions:\n
         - Foreground Location ❌\n
         - Background Location ❌\n
-        Tap on the button to give foreground location permissions.
+        \nTap on the button to give foreground location permissions.
     </string>
     <string name="error_add_geofences_generic">⚠️ An error occurred while adding geofence ⚠️</string>
     <string name="error_remove_geofences_generic">⚠️ An error occurred while removing geofence ⚠️</string>
@@ -40,6 +38,12 @@
         📍 Wait until your position is displayed with a narrow circle\n
         🤞 Come back here and try again
     </string>
+    <string name="dialog_location_permissions_title">Background Location</string>
+    <string name="dialog_location_permissions_message">
+        This app collects location data to enable location-based notifications even when the app is closed or not in use.\n
+        Do you want to proceed with permissions request?</string>
+    <string name="dialog_location_permissions_button_positive">Yes</string>
+    <string name="dialog_location_permissions_button_negative">Cancel</string>
     <string name="error_missing_app_to_open">Choose the app to open when the notification is tapped 📲🔔</string>
     <string name="error_gps_turned_off">⚠️ You need to turn on the GPS in order to save your home location 🛰️️</string>
     <string name="error_location_generic">⚠️ An error occurred while retrieving location ⚠️</string>
