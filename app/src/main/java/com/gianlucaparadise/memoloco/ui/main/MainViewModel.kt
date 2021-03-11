@@ -110,13 +110,7 @@ class MainViewModel @ViewModelInject constructor(
     }
 
     fun startPermissionsRequestAndAddGeofence() {
-        if(permissionsRequestor.canRequestBackgroundPermissions) {
-            // For background permissions, I need to display a dialog
-            _isLocationPermissionsDialogVisible.value = true
-        }
-        else {
-            requestPermissionsAndAddGeofence()
-        }
+        _isLocationPermissionsDialogVisible.value = true
     }
 
     fun onLocationPermissionsDialogCancel() {
